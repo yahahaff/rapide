@@ -1,0 +1,83 @@
+app:
+  name: rapide
+  # env: local,testing,production
+  env: local
+  # 加密会话、JWT 加密
+  key: BqNKuYbYHEbWgcoFyCqLDvoGkotXtHxH
+  # gin 是否进入调试模式
+  debug: true
+  # 用以生成链接
+  url: http://localhost:8080
+  ginModel: debug  #  debug,release
+  port: 8080
+
+database:
+  driver: mysql
+  connection:
+    host: localhost
+    port: 3306
+    database: rapide
+    username: root
+    password: password
+    charset: utf8mb4
+    max_idle_connections: 100
+    max_open_connections: 25
+    max_life_seconds: 5*60
+  log:
+    debug: 2
+
+#database:
+#  driver: sqlite
+#  connection:
+#    file: /path/to/database.db
+#    debug: 2
+
+
+redis:
+  host: localhost
+  port: 6379
+  database: 0
+
+
+log:
+  level: debug
+  max_size: 1
+  path: storage/logs/rapide.log
+
+mail:
+  host: smtp.gmail.com
+  port: 587
+  username:
+  password:
+  from_address: rapide@example.com
+  from_name: rapide
+
+sms_aliyun:
+  access_id: xxxxx
+  access_secret: xxxxxx
+  sign_name: 阿里云短信测试
+  template_code: xxxxx
+
+cloudflare:
+  api: https://api.cloudflare.com/client/v4
+  api_token: xxxxxxxxxxxxxxx
+
+jwt:
+  expire_time: 120
+  max_refresh_time: 86400
+  debug_expire_time:  86400
+
+captcha:
+  height: 80
+  width: 240
+  length: 6
+  maxskew: 0.7
+  dotcount: 80
+  expire_time: 15
+  debug_expire_time: 10080
+  testing_key: captcha_skip_test
+
+
+telegram:
+  bot_token: xxxxxxxxxxxxxx
+  group_id: xxxx
