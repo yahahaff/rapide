@@ -44,17 +44,6 @@ type ZoneError struct {
 	Message string `json:"message"`
 }
 
-// GetZoneList 获取zones列表
-// @BasePath
-// @Summary 获取zones列表
-// @Security Bearer
-// @Schemes
-// @Description
-// @Tags cloudflare
-// @Accept json
-// @Produce json
-// @Success 200 {object} response.Response
-// @Router /api/cloudflare/zones/getZoneList [get]
 func (d *ZonesController) GetZoneList(c *gin.Context) {
 
 	url := "https://api.cloudflare.com/client/v4/zones"
@@ -89,18 +78,6 @@ func (d *ZonesController) GetZoneList(c *gin.Context) {
 	response.OK(c, Data)
 }
 
-// CreateZone 创建zone
-// @BasePath
-// @Summary 创建zone
-// @Security Bearer
-// @Schemes
-// @Description
-// @Tags cloudflare
-// @Param data body cloudflare.CreateZoneRequest{} true "body"
-// @Accept json
-// @Produce json
-// @Success 200 {object} response.Response
-// @Router /api/cloudflare/zones/createZone [POST]
 func (d *ZonesController) CreateZone(c *gin.Context) {
 	// 1.参数验证
 	var request cloudflare.CreateZoneRequest
@@ -147,18 +124,6 @@ func (d *ZonesController) CreateZone(c *gin.Context) {
 
 }
 
-// DeleteZone 删除zone
-// @BasePath
-// @Summary 删除zone
-// @Security Bearer
-// @Schemes
-// @Description
-// @Tags cloudflare
-// @Param data body cloudflare.ZoneIDRequest{} true "body"
-// @Accept json
-// @Produce json
-// @Success 200 {object} response.Response
-// @Router /api/cloudflare/zones/deleteZone [DELETE]
 func (d *ZonesController) DeleteZone(c *gin.Context) {
 	// 1.参数验证
 	var request cloudflare.ZoneIDRequest
@@ -195,18 +160,6 @@ func (d *ZonesController) DeleteZone(c *gin.Context) {
 
 }
 
-// GetZoneDetails 获取zone详情
-// @BasePath
-// @Summary 获取zone详情
-// @Security Bearer
-// @Schemes
-// @Description
-// @Tags cloudflare
-// @Accept json
-// @Produce json
-// @Param zone_id query string true "zone_id"
-// @Success 200 {object} response.Response
-// @Router /api/cloudflare/zones/getZoneDetails [get]
 func (d *ZonesController) GetZoneDetails(c *gin.Context) {
 	// 1.参数验证
 	var request cloudflare.ZoneIDRequest
@@ -242,18 +195,6 @@ func (d *ZonesController) GetZoneDetails(c *gin.Context) {
 
 }
 
-// EditZone 更新zone
-// @BasePath
-// @Summary 更新zone
-// @Security Bearer
-// @Schemes
-// @Description
-// @Tags cloudflare
-// @Accept json
-// @Produce json
-// @Param data body cloudflare.EditZoneRequest{} true "body"
-// @Success 200 {object} response.Response
-// @Router /api/cloudflare/zones/editZone [PATCH]
 func (d *ZonesController) EditZone(c *gin.Context) {
 	// 1.参数验证
 	var request cloudflare.EditZoneRequest
@@ -291,18 +232,6 @@ func (d *ZonesController) EditZone(c *gin.Context) {
 	response.OK(c, responseData)
 }
 
-// PurgeCacheZone 清空zone缓存
-// @BasePath 清空zone缓存
-// @Summary
-// @Security Bearer
-// @Schemes
-// @Description
-// @Tags cloudflare
-// @Accept json
-// @Produce json
-// @Param zone_id query string true "zone_id"
-// @Success 200 {object} response.Response
-// @Router /api/cloudflare/zones/purgeCache [POST]
 func (d *ZonesController) PurgeCacheZone(c *gin.Context) {
 	// 1.参数验证
 	var request cloudflare.ZoneIDRequest

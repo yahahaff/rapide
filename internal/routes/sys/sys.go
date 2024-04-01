@@ -3,9 +3,10 @@ package sys
 import "github.com/gin-gonic/gin"
 
 func RouterGroup(router *gin.Engine) *gin.RouterGroup {
-	sys := router.Group("/api")
 	internal := router.Group("")
 	InternalRouter(internal)
+
+	sys := router.Group("/api")
 	AuthRouter(sys)
 	UserRouter(sys)
 	CaptchaRouter(sys)

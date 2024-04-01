@@ -36,18 +36,6 @@ type ErrorChain struct {
 	Message string `json:"message"`
 }
 
-// GetDnsList 获取dns列表
-// @BasePath
-// @Summary 获取dns列表
-// @Security Bearer
-// @Schemes
-// @Description
-// @Tags cloudflare
-// @Accept json
-// @Produce json
-// @Param zone_id query string true "zone_id"
-// @Success 200 {object} response.Response
-// @Router /api/cloudflare/dns/getDnsList [get]
 func (d *DnsController) GetDnsList(c *gin.Context) {
 	CloudflareApi := config.GetString("cloudflare.api")
 	fmt.Println(CloudflareApi)
@@ -93,18 +81,6 @@ func (d *DnsController) GetDnsList(c *gin.Context) {
 	response.OK(c, Data)
 }
 
-// CreateDnsRecord 创建Dns记录
-// @BasePath
-// @Summary 创建Dns记录
-// @Security Bearer
-// @Schemes
-// @Description
-// @Tags cloudflare
-// @Param data body cloudflare.DnsCreateRequest{} true "body"
-// @Accept json
-// @Produce json
-// @Success 200 {object} response.Response
-// @Router /api/cloudflare/dns/createDnsRecord [POST]
 func (d *DnsController) CreateDnsRecord(c *gin.Context) {
 	// 1.参数验证
 	var request cloudflare.DnsCreateRequest
@@ -160,19 +136,6 @@ func (d *DnsController) CreateDnsRecord(c *gin.Context) {
 
 }
 
-// DeleteDnsRecord 删除Dns记录
-// @BasePath
-// @Summary 删除Dns记录
-// @Security Bearer
-// @Schemes
-// @Description
-// @Tags cloudflare
-// @Param zone_id query string true "zone_id"
-// @Param dns_id query string true "dns_id"
-// @Accept json
-// @Produce json
-// @Success 200 {object} response.Response
-// @Router /api/cloudflare/dns/deleteDnsRecord [DELETE]
 func (d *DnsController) DeleteDnsRecord(c *gin.Context) {
 	// 1.参数验证
 	request := cloudflare.DnsDeleteRequest{
@@ -216,19 +179,6 @@ func (d *DnsController) DeleteDnsRecord(c *gin.Context) {
 
 }
 
-// GetDnsRecordDetail 获取Dns记录详情
-// @BasePath
-// @Summary 获取Dns记录详情
-// @Security Bearer
-// @Schemes
-// @Description
-// @Tags cloudflare
-// @Param zone_id query string true "zone_id"
-// @Param dns_id query string true "dns_id"
-// @Accept json
-// @Produce json
-// @Success 200 {object} response.Response
-// @Router /api/cloudflare/dns/getDnsRecordDetail [GET]
 func (d *DnsController) GetDnsRecordDetail(c *gin.Context) {
 	// 1.参数验证
 	request := cloudflare.DnsDeleteRequest{
@@ -272,18 +222,6 @@ func (d *DnsController) GetDnsRecordDetail(c *gin.Context) {
 
 }
 
-// UpdateDnsRecord 更新Dns记录
-// @BasePath
-// @Summary 更新Dns记录
-// @Security Bearer
-// @Schemes
-// @Description
-// @Tags cloudflare
-// @Param data body cloudflare.DnsUpdateRequest{} true "body"
-// @Accept json
-// @Produce json
-// @Success 200 {object} response.Response
-// @Router /api/cloudflare/dns/UpdateDnsRecord [PUT]
 func (d *DnsController) UpdateDnsRecord(c *gin.Context) {
 	// 1.参数验证
 	var request cloudflare.DnsUpdateRequest
