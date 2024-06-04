@@ -38,6 +38,9 @@ redis:
   port: 6379
   database: 0
 
+etcd:
+  host: localhost
+  port: 2379
 
 log:
   level: debug
@@ -76,8 +79,3 @@ captcha:
   expire_time: 15
   debug_expire_time: 10080
   testing_key: captcha_skip_test
-
-
-telegram:
-  bot_token: xxxxxxxxxxxxxx
-  group_id: xxxx
