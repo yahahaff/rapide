@@ -16,16 +16,6 @@ type LoginController struct {
 	api.BaseAPIController
 }
 
-// LoginByPhone 手机登录
-// @Summary 使用手机短信验证码登录
-// @Schemes sys.LoginByPhoneRequest{}
-// @Param data body sys.LoginByPhoneRequest{} true "body"
-// @Description
-// @Tags 登录注册
-// @Accept json
-// @Produce json
-// @Success 200 {object} response.Response
-// @Router /api/login/using-phone [post]
 func (lc *LoginController) LoginByPhone(c *gin.Context) {
 
 	// 1. 验证表单

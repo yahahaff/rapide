@@ -22,16 +22,6 @@ type SignupServiceInterface interface {
 	Signup(request *sys.SignupRequest)
 }
 
-// IsPhoneExist 检查手机号是否已注册
-// @Summary 检查手机号是否已注册
-// @Schemes sys.SignupPhoneExistRequest{}
-// @Description
-// @Tags 登录注册
-// @Param data body sys.SignupPhoneExistRequest{} true "body"
-// @Accept json
-// @Produce json
-// @Success 200 {object} response.Response
-// @Router /api/signup/phone/exist [post]
 func (sc *SignupController) IsPhoneExist(c *gin.Context) {
 	// 获取请求参数，并做表单验证
 	request := sys.SignupPhoneExistRequest{}
@@ -98,16 +88,6 @@ func (sc *SignupController) SignupUsingUserName(c *gin.Context) {
 	response.OK(c, data)
 }
 
-// SignupUsingPhone 使用手机和验证码进行注册
-// @Summary 使用手机和验证码进行注册
-// @Schemes sys.SignupRequest{}
-// @Description
-// @Tags 登录注册
-// @Param data body sys.SignupRequest{} true "body"
-// @Accept json
-// @Produce json
-// @Success 200 {object} response.Response
-// @Router /api/signup/using-phone [post]
 func (sc *SignupController) SignupUsingPhone(c *gin.Context) {
 
 	// 1. 验证表单
@@ -134,16 +114,6 @@ func (sc *SignupController) SignupUsingPhone(c *gin.Context) {
 	response.OK(c, data)
 }
 
-// SignupUsingEmail 使用 Email + 验证码进行注册
-// @Summary 使用邮箱进行注册
-// @Schemes sys.SignupRequest{}
-// @Description
-// @Tags 登录注册
-// @Param data body sys.SignupRequest{} true "body"
-// @Accept json
-// @Produce json
-// @Success 200 {object} response.Response
-// @Router /api/signup/using-email [post]
 func (sc *SignupController) SignupUsingEmail(c *gin.Context) {
 
 	// 1. 验证表单

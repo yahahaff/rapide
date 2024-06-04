@@ -49,15 +49,6 @@ func (vc *VerifyCodeController) ShowCaptcha(c *gin.Context) {
 	response.OK(c, data)
 }
 
-// SendUsingPhone 发送手机验证码
-// @Summary 发送手机验证码
-// @Description
-// @Tags 验证码
-// @Param data body sys.VerifyCodePhoneRequest{} true "body"
-// @Accept json
-// @Produce json
-// @Success 200 {string} ok
-// @Router /api/captcha/phone [post]
 func (vc *VerifyCodeController) SendUsingPhone(c *gin.Context) {
 
 	// 1. 验证表单
