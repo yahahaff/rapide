@@ -1,6 +1,4 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
+// Package cmd /*
 package cmd
 
 import (
@@ -38,8 +36,8 @@ var rootCmd = &cobra.Command{
 		// 初始化Validator
 		initialize.SetupValidators()
 
-		// 初始化TelegramBot
-		initialize.SetupTelegramBot()
+		// 初始化EtcdClient
+		initialize.SetupEtcd()
 
 	},
 }
