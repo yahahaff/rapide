@@ -27,6 +27,9 @@ doError:
 
 // GetPolicy P list
 func (cs *CasbinService) GetPolicy() [][]string {
-	policy := casbin.Enforcer.GetPolicy()
+	policy, err := casbin.Enforcer.GetPolicy()
+	if err != nil {
+		panic(err)
+	}
 	return policy
 }
