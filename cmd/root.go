@@ -37,7 +37,7 @@ var rootCmd = &cobra.Command{
 		initialize.SetupValidators()
 
 		// 初始化EtcdClient
-		initialize.SetupEtcd()
+		//initialize.SetupEtcd()
 
 	},
 }
