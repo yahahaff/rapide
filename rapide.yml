@@ -7,14 +7,14 @@ app:
   # gin 是否进入调试模式
   debug: true
   # 用以生成链接
-  url: http://localhost:8080
+  url: http://localhost:8000
   ginModel: debug  #  debug,release
-  port: 8080
+  port: 8000
 
 database:
   driver: mysql
   connection:
-    host: localhost
+    host: 172.18.8.80
     port: 3306
     database: rapide
     username: root
@@ -34,13 +34,20 @@ database:
 
 
 redis:
-  host: localhost
+  host: 172.18.8.80
   port: 6379
   database: 0
 
 etcd:
-  host: localhost
+  host: 172.18.8.80
   port: 2379
+  tls:
+    crt:
+    key:
+
+etcd_http_url: http://172.18.8.80:2379
+
+
 
 log:
   level: debug
