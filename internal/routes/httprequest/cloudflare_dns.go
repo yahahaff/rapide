@@ -1,13 +1,13 @@
-package cloudflare
+package httprequest
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/yahahaff/rapide/internal/controllers/api/cloudflare"
+	"github.com/yahahaff/rapide/internal/controllers/api/httprequest/cloudflare"
 )
 
 func DnsRouter(Router *gin.RouterGroup) {
 
-	dnsGroup := Router.Group("/dns")
+	dnsGroup := Router.Group("/cloudflare/dns")
 	dns := new(cloudflare.DnsController)
 	// getDnsList
 	dnsGroup.GET("getDnsList", dns.GetDnsList)

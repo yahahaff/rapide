@@ -1,13 +1,13 @@
-package cloudflare
+package httprequest
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/yahahaff/rapide/internal/controllers/api/cloudflare"
+	"github.com/yahahaff/rapide/internal/controllers/api/httprequest/cloudflare"
 )
 
 func ZonesRouter(Router *gin.RouterGroup) {
 
-	zonesGroup := Router.Group("/zones")
+	zonesGroup := Router.Group("/cloudflare/zones")
 	zone := new(cloudflare.ZonesController)
 	// 获取zonesList
 	zonesGroup.GET("getZoneList", zone.GetZoneList)
