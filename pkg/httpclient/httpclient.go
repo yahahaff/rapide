@@ -32,7 +32,7 @@ func Request(method, url string, headers map[string]string, body io.Reader) ([]b
 		}
 	}()
 	responseBody, err := io.ReadAll(res.Body)
-	logger.DebugString("gateway", "debug", fmt.Sprintf(string(responseBody)))
+	logger.DebugString("http", "debug", fmt.Sprintf(string(responseBody)))
 	if err != nil {
 		return nil, err
 	}
