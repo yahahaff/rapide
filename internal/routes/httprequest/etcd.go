@@ -7,9 +7,11 @@ import (
 
 func EtcdRouter(Router *gin.RouterGroup) {
 
-	etcdGroup := Router.Group("/etcdClient")
+	etcdGroup := Router.Group("/v3/kv")
 	etcd := new(httprequest.EtcdController)
 	// 获取etcd键值
-	etcdGroup.GET("getList", etcd.GetList)
+	etcdGroup.POST("range", etcd.GetKey)
+	etcdGroup.POST("put", etcd.PutKey)
+	etcdGroup.POST("deleteRange", etcd.DeleteKey)
 
 }
