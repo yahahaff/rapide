@@ -1,5 +1,5 @@
 definitions:
-  httprequest.EtcdPutRequest:
+  http.EtcdPutRequest:
     properties:
       key:
         maxLength: 255
@@ -11,7 +11,7 @@ definitions:
     - key
     - value
     type: object
-  httprequest.EtcdRangeRequest:
+  http.EtcdRangeRequest:
     properties:
       key:
         maxLength: 255
@@ -272,6 +272,82 @@ info:
   title: Rapide API
   version: "1.0"
 paths:
+  /api/authenticator/disable:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 关闭2FA
+      tags:
+      - 2FA
+  /api/authenticator/generate:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 生成2FA密钥与二维码
+      tags:
+      - 2FA
+  /api/authenticator/validate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/sys.GenerateVerifyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 验证2FA
+      tags:
+      - 2FA
+  /api/authenticator/verify:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/sys.VerifyActivateOtpRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 验证2FA 用户token和数据库密钥
+      tags:
+      - 2FA
   /api/captcha/image:
     post:
       consumes:
@@ -487,82 +563,6 @@ paths:
       summary: 更新菜单
       tags:
       - 系统管理
-  /api/opt/Disable:
-    post:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: 关闭OTP
-      tags:
-      - 验证码
-  /api/opt/Validate:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: body
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/sys.GenerateVerifyRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 验证OTP
-      tags:
-      - 验证码
-  /api/opt/generateOTP:
-    post:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: 生成OPT密钥与二维码
-      tags:
-      - 验证码
-  /api/opt/verifyOtp:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: body
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/sys.VerifyActivateOtpRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: 验证OTP  绑定OPT时调用 有数据库操作
-      tags:
-      - 验证码
   /api/permissions:
     get:
       consumes:
@@ -950,7 +950,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/httprequest.EtcdRangeRequest'
+          $ref: '#/definitions/http.EtcdRangeRequest'
       produces:
       - application/json
       responses:
@@ -972,7 +972,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/httprequest.EtcdPutRequest'
+          $ref: '#/definitions/http.EtcdPutRequest'
       produces:
       - application/json
       responses:
@@ -994,7 +994,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/httprequest.EtcdRangeRequest'
+          $ref: '#/definitions/http.EtcdRangeRequest'
       produces:
       - application/json
       responses:
