@@ -10,9 +10,9 @@ import (
 // User 用户模型
 type User struct {
 	models.BaseModel
-	Name         string `json:"name" gorm:"type:varchar(255);not null;index"`
-	Email        string `json:"email" gorm:"type:varchar(255);index;default:null"`
-	Phone        string `json:"phone" gorm:"type:varchar(20);index;default:null"`
+	Name         string `json:"name" gorm:"type:varchar(255);not null;unique_index"`
+	Email        string `json:"email" gorm:"type:varchar(255);index;unique_index;default:null"`
+	Phone        string `json:"phone" gorm:"type:varchar(20);index;unique_index;default:null"`
 	Password     string `json:"-" json:"-" gorm:"type:varchar(255)"`
 	Avatar       string `json:"avatar,omitempty"`
 	RoleID       int    `json:"roleID" gorm:"column:role_id"`
