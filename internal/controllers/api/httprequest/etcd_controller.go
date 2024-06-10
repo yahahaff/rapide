@@ -34,7 +34,7 @@ func (tc *EtcdController) GetKey(c *gin.Context) {
 		return
 	}
 	// 查询所有keys
-	if request.Key == "" {
+	if request.Key == "all" {
 		request.Key = "AA=="
 		request.RangeEnd = "AA=="
 	}

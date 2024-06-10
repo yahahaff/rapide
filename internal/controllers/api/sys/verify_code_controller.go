@@ -64,15 +64,6 @@ func (vc *VerifyCodeController) SendUsingPhone(c *gin.Context) {
 	}
 }
 
-// SendUsingEmail 发送Email验证码
-// @Summary 发送Email验证码
-// @Description
-// @Tags 验证码
-// @Param data body sys.VerifyCodeEmailRequest{} true "body"
-// @Accept json
-// @Produce json
-// @Success 200 {string} ok
-// @Router /api/captcha/email [post]
 func (vc *VerifyCodeController) SendUsingEmail(c *gin.Context) {
 
 	// 1. 验证表单
