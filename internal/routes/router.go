@@ -3,7 +3,7 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/yahahaff/rapide/internal/middlewares"
-	"github.com/yahahaff/rapide/internal/routes/httprequest"
+	"github.com/yahahaff/rapide/internal/routes/http"
 	"github.com/yahahaff/rapide/internal/routes/sys"
 )
 
@@ -11,6 +11,6 @@ import (
 func RegisterAPIRoutes(Router *gin.Engine) {
 	Router.Use(middlewares.RecordOperation())
 	sys.RouterGroup(Router)
-	httprequest.RouterGroup(Router)
+	http.RouterGroup(Router)
 
 }

@@ -13,21 +13,21 @@ import (
 	"strconv"
 )
 
-type OptController struct {
+type AuthenticatorController struct {
 	api.BaseAPIController
 }
 
-// GenerateOTP generates a TOTP code using the provided secret
-// GenerateCode 生成OPT密钥与二维码
-// @Summary 生成OPT密钥与二维码
+// Generate generates a 2FA code using the provided secret
+// GenerateCode 生成2FA密钥与二维码
+// @Summary 生成2FA密钥与二维码
 // @Security Bearer
 // @Description
-// @Tags 验证码
+// @Tags 2FA
 // @Accept json
 // @Produce json
 // @Success 200 {object} response.Response
-// @Router /api/opt/generateOTP [post]
-func (opt *OptController) GenerateOTP(c *gin.Context) {
+// @Router /api/authenticator/generate [post]
+func (ac *AuthenticatorController) Generate(c *gin.Context) {
 
 	//获取当前用户名
 	userModel := service.Entrance.SysService.AuthService.CurrentUser(c)
@@ -46,27 +46,27 @@ func (opt *OptController) GenerateOTP(c *gin.Context) {
 	sys.UpdateOpt(userModel.Name, key.Secret(), key.URL())
 
 	// 3.返回数组 组装
-	otpResponse := gin.H{
+	response := gin.H{
 		"base32":       key.Secret(),
 		"otp-auth-url": key.URL(),
 	}
 
-	c.JSON(http.StatusOK, otpResponse)
+	c.JSON(http.StatusOK, response)
 
 }
 
-// VerifyOTP 验证OTP
-// @Summary 验证OTP  绑定OPT时调用 有数据库操作
+// Verify 验证2FA
+// @Summary 验证2FA 用户token和数据库密钥
 // @Description
 // @Security Bearer
 // @Schemes sys.VerifyActivateOtpRequest{}
 // @Param data body sys.VerifyActivateOtpRequest{} true "body"
-// @Tags 验证码
+// @Tags 2FA
 // @Accept json
 // @Produce json
 // @Success 200 {object} response.Response
-// @Router /api/opt/verifyOtp [post]
-func (opt *OptController) VerifyOTP(c *gin.Context) {
+// @Router /api/authenticator/verify [post]
+func (ac *AuthenticatorController) Verify(c *gin.Context) {
 
 	// 1. 验证表单
 	request := sysReq.VerifyActivateOtpRequest{}
@@ -80,14 +80,14 @@ func (opt *OptController) VerifyOTP(c *gin.Context) {
 	// 2.获取用户密钥
 	secret := sys.GetOtpSecret(userModel.Name)
 
-	// 3.验证
+	// 3.验证用户token 和数据库密钥
 	valid := totp.Validate(request.Token, secret.OtpSecret)
 	if !valid {
 		c.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "message"})
 		return
 	}
 
-	// 4.设置用户OPT状态
+	// 4.设置用户2FA状态
 	sys.SetOptStatus(userModel.Name)
 
 	// 5.生成JWT
@@ -97,17 +97,17 @@ func (opt *OptController) VerifyOTP(c *gin.Context) {
 
 }
 
-// ValidateOTP 验证OTP
-// @Summary 验证OTP
+// Validate 验证2FA
+// @Summary 验证2FA
 // @Description
 // @Schemes sys.GenerateVerifyRequest{}
 // @Param data body sys.GenerateVerifyRequest{} true "body"
-// @Tags 验证码
+// @Tags 2FA
 // @Accept json
 // @Produce json
 // @Success 200 {object} response.Response
-// @Router /api/opt/Validate [post]
-func (opt *OptController) ValidateOTP(c *gin.Context) {
+// @Router /api/authenticator/validate [post]
+func (ac *AuthenticatorController) Validate(c *gin.Context) {
 
 	// 1. 验证表单
 	request := sysReq.GenerateVerifyRequest{}
@@ -131,17 +131,17 @@ func (opt *OptController) ValidateOTP(c *gin.Context) {
 
 }
 
-// DisableOTP 关闭OTP
-// @Summary 关闭OTP
+// Disable 关闭2FA
+// @Summary 关闭2FA
 // @Description
 // @Security Bearer
 // @Schemes
-// @Tags 验证码
+// @Tags 2FA
 // @Accept json
 // @Produce json
 // @Success 200 {object} response.Response
-// @Router /api/opt/Disable [post]
-func (opt *OptController) DisableOTP(c *gin.Context) {
+// @Router /api/authenticator/disable [post]
+func (ac *AuthenticatorController) Disable(c *gin.Context) {
 
 	//获取当前用户名
 	userModel := service.Entrance.SysService.AuthService.CurrentUser(c)

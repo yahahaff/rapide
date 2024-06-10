@@ -1,8 +1,8 @@
-package httprequest
+package http
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/yahahaff/rapide/internal/controllers/api/httprequest/cloudflare"
+	"github.com/yahahaff/rapide/internal/controllers/api/http/cloudflare"
 )
 
 func DnsRouter(Router *gin.RouterGroup) {

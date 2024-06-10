@@ -8,9 +8,10 @@ func RouterGroup(router *gin.Engine) *gin.RouterGroup {
 
 	sys := router.Group("/api")
 	AuthRouter(sys)
-	UserRouter(sys)
+	AuthenticatorRouter(sys)
 	CaptchaRouter(sys)
 	CasbinRouter(sys)
+	UserRouter(sys)
 	OperationLogRouter(sys)
 	MenuRouter(sys)
 	return sys

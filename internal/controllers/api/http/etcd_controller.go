@@ -1,10 +1,10 @@
-package httprequest
+package http
 
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/yahahaff/rapide/internal/controllers/api"
-	"github.com/yahahaff/rapide/internal/requests/httprequest"
+	reqHttp "github.com/yahahaff/rapide/internal/requests/http"
 	"github.com/yahahaff/rapide/internal/requests/validators"
 	"github.com/yahahaff/rapide/internal/response"
 	"github.com/yahahaff/rapide/internal/service"
@@ -18,8 +18,8 @@ type EtcdController struct {
 
 // GetKey
 // @Summary  获取key
-// @Schemes httprequest.EtcdRangeRequest{}
-// @Param data body httprequest.EtcdRangeRequest{} true "body"
+// @Schemes http.EtcdRangeRequest{}
+// @Param data body http.EtcdRangeRequest{} true "body"
 // @Security Bearer
 // @Description
 // @Tags ETCD
@@ -29,7 +29,7 @@ type EtcdController struct {
 // @Router /api/v3/kv/range [post]
 func (tc *EtcdController) GetKey(c *gin.Context) {
 	// 1. 验证参数
-	request := httprequest.EtcdRangeRequest{}
+	request := reqHttp.EtcdRangeRequest{}
 	if ok := validators.Validate(c, &request); !ok {
 		return
 	}
@@ -57,8 +57,8 @@ func (tc *EtcdController) GetKey(c *gin.Context) {
 }
 
 // PutKey
-// @Schemes httprequest.EtcdPutRequest{}
-// @Param data body httprequest.EtcdPutRequest{} true "body"
+// @Schemes http.EtcdPutRequest{}
+// @Param data body http.EtcdPutRequest{} true "body"
 // @Security Bearer
 // @Description
 // @Tags ETCD
@@ -69,7 +69,7 @@ func (tc *EtcdController) GetKey(c *gin.Context) {
 func (tc *EtcdController) PutKey(c *gin.Context) {
 
 	// 1. 验证参数
-	request := httprequest.EtcdPutRequest{}
+	request := reqHttp.EtcdPutRequest{}
 	if ok := validators.Validate(c, &request); !ok {
 		return
 	}
@@ -92,8 +92,8 @@ func (tc *EtcdController) PutKey(c *gin.Context) {
 }
 
 // DeleteKey
-// @Schemes httprequest.EtcdRangeRequest{}
-// @Param data body httprequest.EtcdRangeRequest{} true "body"
+// @Schemes http.EtcdRangeRequest{}
+// @Param data body http.EtcdRangeRequest{} true "body"
 // @Security Bearer
 // @Description
 // @Tags ETCD
@@ -104,7 +104,7 @@ func (tc *EtcdController) PutKey(c *gin.Context) {
 func (tc *EtcdController) DeleteKey(c *gin.Context) {
 
 	// 1. 验证参数
-	request := httprequest.EtcdRangeRequest{}
+	request := reqHttp.EtcdRangeRequest{}
 	if ok := validators.Validate(c, &request); !ok {
 		return
 	}
