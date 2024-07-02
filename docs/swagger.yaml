@@ -45,7 +45,6 @@ definitions:
     required:
     - method
     - role_id
-    - type
     - uri
     type: object
   sys.DeptAddRequest:
@@ -192,36 +191,43 @@ definitions:
   sys.SignupRequest:
     properties:
       dept_id:
+        maximum: 2
         type: integer
       email:
+        maxLength: 254
         type: string
       name:
+        maxLength: 15
         type: string
       password:
+        maxLength: 255
         type: string
       password_confirm:
+        maxLength: 255
         type: string
       phone:
+        maxLength: 11
         type: string
       role_id:
+        maximum: 2
         type: integer
       verify_code:
+        maxLength: 6
         type: string
     required:
     - dept_id
-    - email
     - name
     - password
     - password_confirm
-    - phone
     - role_id
-    - verify_code
     type: object
   sys.UserUpdateEmailRequest:
     properties:
       email:
+        maxLength: 254
         type: string
       verify_code:
+        maxLength: 6
         type: string
     required:
     - email
@@ -243,8 +249,10 @@ definitions:
   sys.UserUpdatePhoneRequest:
     properties:
       phone:
+        maxLength: 11
         type: string
       verify_code:
+        maxLength: 6
         type: string
     required:
     - phone
@@ -255,6 +263,7 @@ definitions:
       introduction:
         type: string
       name:
+        maxLength: 15
         type: string
     required:
     - introduction

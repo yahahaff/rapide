@@ -1274,7 +1274,6 @@ const docTemplate = `{
             "required": [
                 "method",
                 "role_id",
-                "type",
                 "uri"
             ],
             "properties": {
@@ -1503,12 +1502,10 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "dept_id",
-                "email",
                 "name",
                 "password",
                 "password_confirm",
-                "role_id",
-                "verify_code"
+                "role_id"
             ],
             "properties": {
                 "dept_id": {

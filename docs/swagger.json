@@ -1265,7 +1265,6 @@
             "required": [
                 "method",
                 "role_id",
-                "type",
                 "uri"
             ],
             "properties": {
@@ -1494,38 +1493,43 @@
             "type": "object",
             "required": [
                 "dept_id",
-                "email",
                 "name",
                 "password",
                 "password_confirm",
-                "phone",
-                "role_id",
-                "verify_code"
+                "role_id"
             ],
             "properties": {
                 "dept_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 2
                 },
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 254
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 15
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "password_confirm": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "phone": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 11
                 },
                 "role_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 2
                 },
                 "verify_code": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 6
                 }
             }
         },
@@ -1537,10 +1541,12 @@
             ],
             "properties": {
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 254
                 },
                 "verify_code": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 6
                 }
             }
         },
@@ -1571,10 +1577,12 @@
             ],
             "properties": {
                 "phone": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 11
                 },
                 "verify_code": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 6
                 }
             }
         },
@@ -1589,7 +1597,8 @@
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 15
                 }
             }
         },
