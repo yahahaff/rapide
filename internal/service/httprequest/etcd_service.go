@@ -48,7 +48,7 @@ func RequestHeaders() map[string]string {
 
 // GetEtcdHttpUrl 获取etcd地址
 func (es *EtcdService) GetEtcdHttpUrl() string {
-	return config.GetString("etcd_http_url")
+	return config.GetString("ETCD_HTTP_URL", "http://localhost:2379")
 }
 
 // DecodeBase64 方法用于对 Entry 结构体中的 Key 和 Value 进行 Base64 解码

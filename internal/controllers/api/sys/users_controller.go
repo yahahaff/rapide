@@ -8,7 +8,6 @@ import (
 	"github.com/yahahaff/rapide/internal/requests/validators"
 	"github.com/yahahaff/rapide/internal/response"
 	"github.com/yahahaff/rapide/internal/service"
-	"github.com/yahahaff/rapide/pkg/config"
 	"github.com/yahahaff/rapide/pkg/file"
 	"github.com/yahahaff/rapide/pkg/jwt"
 	"github.com/yahahaff/rapide/pkg/logger"
@@ -263,7 +262,7 @@ func (ctrl *UsersController) UpdateAvatar(c *gin.Context) {
 	}
 
 	currentUser := service.Entrance.SysService.AuthService.CurrentUser(c)
-	currentUser.Avatar = config.GetString("internal.url") + avatar
+	currentUser.Avatar = avatar
 	currentUser.Save()
 
 	response.OK(c, currentUser)

@@ -17,23 +17,23 @@ import (
 // SetupDB 初始化数据库和 ORM
 func SetupDB() {
 	var dbConfig gorm.Dialector
-	switch config.GetString("database.driver") {
+	switch config.GetString("DB_DRIVER", "sqlite") {
 	case "mysql":
 		// 构建 DSN 信息
 		dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?charset=%v&parseTime=True&multiStatements=true&loc=Local",
-			config.GetString("database.connection.username"),
-			config.GetString("database.connection.password"),
-			config.GetString("database.connection.host", "localhost"),
-			config.GetString("database.connection.port", 3306),
-			config.GetString("database.connection.database", "rapide"),
-			config.GetString("database.connection.charset"),
+			config.GetString("DB_CONNECTION_USERNAME", "root"),
+			config.GetString("DB_CONNECTION_PASSWORD", "password"),
+			config.GetString("DB_CONNECTION_HOST", "localhost"),
+			config.GetInt("DB_CONNECTION_PORT", 3306),
+			config.GetString("DB_CONNECTION_DATABASE", "liuguang"),
+			config.GetString("DB_CONNECTION_CHARSET", "utf8mb4"),
 		)
 		dbConfig = mysql.New(mysql.Config{
 			DSN: dsn,
 		})
 	case "sqlite":
 		// 初始化 sqlite
-		database := config.GetString("database.connection.file")
+		database := config.GetString("DB_CONNECTION_FILE", "database.db")
 		dbConfig = sqlite.Open(database)
 	default:
 		panic(errors.New("database connection not supported"))
@@ -46,12 +46,11 @@ func SetupDB() {
 	database.Connect(dbConfig, logger.NewGormLogger())
 
 	// 设置最大连接数
-	database.SQLDB.SetMaxOpenConns(config.GetInt("database.connection.max_open_connections"))
+	database.SQLDB.SetMaxOpenConns(config.GetInt("DB_CONNECTION_MAX_OPEN_CONNECTIONS", 100))
 	// 设置最大空闲连接数
-	database.SQLDB.SetMaxIdleConns(config.GetInt("database.connection.max_idle_connections"))
+	database.SQLDB.SetMaxIdleConns(config.GetInt("DB_CONNECTION_MAX_IDLE_CONNECTIONS", 10))
 	// 设置每个链接的过期时间
-	database.SQLDB.SetConnMaxLifetime(time.Duration(config.GetInt("database.connection.max_life_seconds")) * time.Second)
-
+	database.SQLDB.SetConnMaxLifetime(time.Duration(config.GetInt("DB_CONNECTION_MAX_LIFE_SECONDS", 3600)) * time.Second)
 	//gorm 自动迁移表 rbac 迁移临时用用
 	err := database.DB.AutoMigrate(&sys.User{}, &sys.Menu{}, &sys.Role{}, &sys.Dept{}, &sys.OperationLog{})
 	if err != nil {

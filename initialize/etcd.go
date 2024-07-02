@@ -12,7 +12,7 @@ var EtcdClient *etcd.EtcdClient
 
 // SetupEtcd initializes Etcd
 func SetupEtcd() {
-	etcdUrl := config.GetString("etcd.host.port")
+	etcdUrl := config.GetString("ETCD_URL", "http://localhost:2379")
 	endpoints := []string{etcdUrl}
 	dialTimeout := 5 * time.Second
 

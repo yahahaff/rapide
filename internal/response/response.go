@@ -72,6 +72,15 @@ func Success(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+// Abort400 BadRequest 响应 400，未传参 msg 时使用默认消息
+func Abort400(c *gin.Context, msg ...string) {
+	response := Response{
+		Code:    1,
+		Message: defaultMessage("BadRequest", msg...),
+	}
+	c.AbortWithStatusJSON(http.StatusBadRequest, response)
+}
+
 // Abort401 Unauthorized 响应 401，未传参 msg 时使用默认消息
 func Abort401(c *gin.Context, msg ...string) {
 	response := Response{

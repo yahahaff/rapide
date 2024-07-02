@@ -16,10 +16,10 @@ type RedisStore struct {
 // Set 实现 verifycode.Store interface 的 Set 方法
 func (s *RedisStore) Set(key string, value string) bool {
 
-	ExpireTime := time.Minute * time.Duration(config.GetInt64("verifycode.expire_time"))
+	ExpireTime := time.Minute * time.Duration(config.GetInt64("VERIFYCODE_EXPIRE_TIME", 10)) // 默认10分钟
 	// 本地环境方便调试
 	if app.IsLocal() {
-		ExpireTime = time.Minute * time.Duration(config.GetInt64("verifycode.debug_expire_time"))
+		ExpireTime = time.Minute * time.Duration(config.GetInt64("VERIFYCODE_DEBUG_EXPIRE_TIME", 30))
 	}
 
 	return s.RedisClient.Set(s.KeyPrefix+key, value, ExpireTime)

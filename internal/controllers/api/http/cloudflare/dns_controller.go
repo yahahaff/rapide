@@ -37,7 +37,7 @@ type ErrorChain struct {
 }
 
 func (d *DnsController) GetDnsList(c *gin.Context) {
-	CloudflareApi := config.GetString("cloudflare.api")
+	CloudflareApi := config.GetString("CLOUDFLARE_API_URL", "baidu.com")
 	fmt.Println(CloudflareApi)
 	zoneId := c.Query("zone_id")
 	url := fmt.Sprintf("https://api.cloudflare.com/client/v4/zones/%s/dns_records", zoneId)

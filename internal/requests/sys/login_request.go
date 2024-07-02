@@ -1,7 +1,7 @@
 package sys
 
 type LoginByPhoneRequest struct {
-	Phone      string `json:"phone" validate:"required,phone"`
+	Phone      string `json:"phone" validate:"required,phone,len=11"`
 	VerifyCode string `json:"verify_code" validate:"required,len=6"`
 }
 

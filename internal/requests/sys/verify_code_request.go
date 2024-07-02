@@ -5,5 +5,5 @@ type VerifyCodePhoneRequest struct {
 }
 
 type VerifyCodeEmailRequest struct {
-	Email string `json:"email" validate:"required"`
+	Email string `json:"email" validate:"required,email"`
 }

@@ -28,16 +28,16 @@ func NewCaptcha() *Captcha {
 		// 使用全局 Redis 对象，并配置存储 Key 的前缀
 		store := RedisStore{
 			RedisClient: redis.Redis,
-			KeyPrefix:   config.GetString("internal.name") + ":captcha:",
+			KeyPrefix:   config.GetString("APP_NAME", "Rapide") + ":captcha:",
 		}
 
 		// 配置 base64Captcha 驱动信息
 		driver := base64Captcha.NewDriverDigit(
-			config.GetInt("captcha.height"),      // 宽
-			config.GetInt("captcha.width"),       // 高
-			config.GetInt("captcha.length"),      // 长度
-			config.GetFloat64("captcha.maxskew"), // 数字的最大倾斜角度
-			config.GetInt("captcha.dotcount"),    // 图片背景里的混淆点数量
+			config.GetInt("CAPTCHA_HEIGHT", 80),       // 宽
+			config.GetInt("CAPTCHA_WIDTH", 240),       // 高
+			config.GetInt("CAPTCHA_lLENGTH", 6),       // 长度
+			config.GetFloat64("CAPTCHA_MAXSKEW", 0.7), // 数字的最大倾斜角度
+			config.GetInt("CAPTCHA_DOTCOUNT", 80),     // 图片背景里的混淆点数量
 		)
 
 		// 实例化 base64Captcha 并赋值给内部使用的 internalCaptcha 对象

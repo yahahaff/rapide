@@ -1,4 +1,4 @@
-// Package user 存放用户 Model 相关逻辑
+// Package sys
 package sys
 
 import (
@@ -10,21 +10,21 @@ import (
 // User 用户模型
 type User struct {
 	models.BaseModel
-	Name         string `json:"name" gorm:"type:varchar(255);not null;unique_index"`
-	Email        string `json:"email" gorm:"type:varchar(255);index;unique_index;default:null"`
-	Phone        string `json:"phone" gorm:"type:varchar(20);index;unique_index;default:null"`
-	Password     string `json:"-" json:"-" gorm:"type:varchar(255)"`
+	Name         string `json:"name" gorm:"type:varchar(255);uniqueIndex;not null"`
+	Email        string `json:"email" gorm:"type:varchar(255);uniqueIndex;default:null"`
+	Phone        string `json:"phone" gorm:"type:varchar(20);uniqueIndex;default:null"`
+	Password     string `json:"-"`
 	Avatar       string `json:"avatar,omitempty"`
 	RoleID       int    `json:"roleID" gorm:"column:role_id"`
-	Role         Role   // 关联的 Role 结构体
+	Role         Role   `json:"role" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	DeptID       int    `json:"deptID" gorm:"column:dept_id"`
-	Dept         Dept
-	Status       int    `json:"status" gorm:"column:status"`
+	Dept         Dept   `json:"dept" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Status       int    `json:"status"`
 	OtpEnabled   bool   `json:"otpEnabled" gorm:"default:false;"`
-	OtpVerified  bool   `json:"OtpVerified" gorm:"default:false;"`
-	OtpSecret    string `json:"-" gorm:"type:varchar(255)"`
-	OtpAuthUrl   string `json:"o" gorm:"type:varchar(255)"`
-	Introduction string `json:"introduction,omitempty" gorm:"type:varchar(255)"`
+	OtpVerified  bool   `json:"otpVerified" gorm:"default:false;"`
+	OtpSecret    string `json:"-"`
+	OtpAuthUrl   string `json:"-"`
+	Introduction string `json:"introduction,omitempty"`
 	models.CommonTimestampsField
 }
 

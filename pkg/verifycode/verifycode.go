@@ -29,7 +29,7 @@ func NewVerifyCode() *VerifyCode {
 			Store: &RedisStore{
 				RedisClient: redis.Redis,
 				// 增加前缀保持数据库整洁，出问题调试时也方便
-				KeyPrefix: config.GetString("internal.name") + ":verifycode:",
+				KeyPrefix: config.GetString("APP_NAME", "rapide") + ":verifycode:",
 			},
 		}
 	})
@@ -51,7 +51,7 @@ func (vc *VerifyCode) SendSMS(phone string) bool {
 
 	// 发送短信
 	return sms.NewSMS().Send(phone, sms.Message{
-		Template: config.GetString("sms.aliyun.template_code"),
+		Template: config.GetString("SMS_ALIYUN.TEMPLATE_CODE", ""),
 		Data:     map[string]string{"code": code},
 	})
 }
@@ -64,7 +64,7 @@ func (vc *VerifyCode) SendEmail(email string) error {
 	// 生成验证码
 	code := vc.generateVerifyCode(email)
 	// 方便本地和 API 自动测试
-	if !app.IsProduction() && strings.HasSuffix(email, config.GetString("verifycode.debug_email_suffix")) {
+	if app.IsLocal() && strings.HasSuffix(email, config.GetString("VERIFYCODE_DEBUG_EMAIL_SUFFIX", "")) {
 		return nil
 	}
 
@@ -72,8 +72,8 @@ func (vc *VerifyCode) SendEmail(email string) error {
 	// 发送邮件
 	mail.NewMailer().Send(mail.Email{
 		From: mail.From{
-			Address: config.GetString("mail.from.address"),
-			Name:    config.GetString("mail.from.name"),
+			Address: config.GetString("MAIL_ADDRESS", ""),
+			Name:    config.GetString("MAIL_NAME", ""),
 		},
 		To:      []string{email},
 		Subject: "Email 验证码",
@@ -101,7 +101,7 @@ func (vc *VerifyCode) CheckAnswer(key string, answer string) bool {
 func (vc *VerifyCode) generateVerifyCode(key string) string {
 
 	// 生成随机码
-	code := helpers.RandomNumber(config.GetInt("verifycode.code_length"))
+	code := helpers.RandomNumber(config.GetInt("VERIFYCODE_CODE_LENGTH", 6))
 
 	// 为方便开发，本地环境使用固定验证码
 	//if internal.IsLocal() {

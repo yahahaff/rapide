@@ -36,6 +36,7 @@ func (sc *SignupController) IsPhoneExist(c *gin.Context) {
 	}
 	result := gin.H{"exist": data}
 	response.OK(c, result)
+	return
 }
 
 // IsEmailExist 检测邮箱是否已注册
@@ -50,6 +51,7 @@ func (sc *SignupController) IsEmailExist(c *gin.Context) {
 	}
 	result := gin.H{"exist": data}
 	response.OK(c, result)
+	return
 }
 
 // SignupUsingUserName 使用用户名进行注册
@@ -79,13 +81,13 @@ func (sc *SignupController) SignupUsingUserName(c *gin.Context) {
 		DeptID:   int(request.DeptId),
 	}
 	// 3. 调用service层
-	data, err := service.Entrance.SysService.SignupService.Signup(*userModel)
-	if err != nil {
-		response.Abort500(c, "创建失败")
+	data, errMsg := service.Entrance.SysService.SignupService.Signup(*userModel)
+	if errMsg != "" {
+		response.Abort500(c, errMsg)
 		return
-
 	}
 	response.OK(c, data)
+	return
 }
 
 func (sc *SignupController) SignupUsingPhone(c *gin.Context) {
@@ -107,11 +109,12 @@ func (sc *SignupController) SignupUsingPhone(c *gin.Context) {
 	}
 
 	data, err := service.Entrance.SysService.SignupService.Signup(*userModel)
-	if err != nil {
-		response.Abort500(c, "创建失败")
+	if err == "" {
+		response.Abort500(c, err)
 		return
 	}
 	response.OK(c, data)
+	return
 }
 
 func (sc *SignupController) SignupUsingEmail(c *gin.Context) {
@@ -131,10 +134,11 @@ func (sc *SignupController) SignupUsingEmail(c *gin.Context) {
 		DeptID:   int(request.DeptId),
 	}
 
-	data, err := service.Entrance.SysService.SignupService.Signup(*userModel)
-	if err != nil {
-		response.Abort500(c, "创建失败")
+	data, errMsg := service.Entrance.SysService.SignupService.Signup(*userModel)
+	if errMsg != "" {
+		response.Abort500(c, errMsg)
 		return
 	}
 	response.OK(c, data)
+	return
 }

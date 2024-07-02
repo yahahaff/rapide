@@ -2,67 +2,68 @@
 package cmd
 
 import (
-	"fmt"
-	"github.com/spf13/cobra"
+	"context"
+	"errors"
+	"github.com/gin-gonic/gin"
 	"github.com/yahahaff/rapide/initialize"
 	"github.com/yahahaff/rapide/pkg/config"
 	"github.com/yahahaff/rapide/pkg/console"
+	"github.com/yahahaff/rapide/pkg/logger"
+	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
-var rootCmd = &cobra.Command{
-	Use:   "Rapide",
-	Short: "A simple forum project",
-	Long:  `Default will run "serve" command, you can use "-h" flag to see all subcommands`,
-
-	// rootCmd 的所有子命令都会执行以下代码
-	PersistentPreRun: func(command *cobra.Command, args []string) {
-
-		// 配置文件初始化，依赖命令行 --config 参数
-		config.InitConfig(ConfigCmd)
-
-		// 初始化 Logger
-		initialize.SetupLogger()
-
-		// 初始化数据库
-		initialize.SetupDB()
-
-		// 初始化 Redis
-		initialize.SetupRedis()
-
-		// 初始化casbin
-		initialize.SetupCasbinEnforcer()
-
-		// 初始化Validator
-		initialize.SetupValidators()
-
-		// 初始化EtcdClient
-		//initialize.SetupEtcd()
-
-	},
-}
-
-func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.AddCommand(CmdKey)
-	rootCmd.AddCommand(CmdServe) //注册ServeCommand
-
-	//rootCmd.PersistentFlags().StringVarP(&userLicense, "license", "l", "", "name of license for the project")
-
-	// 配置默认运行 Web 服务
-	RegisterDefaultCmd(rootCmd, CmdServe)
-
-	// 注册全局参数
-	RegisterGlobalFlags(rootCmd)
-}
-
 func Execute() {
-	err := rootCmd.Execute()
-	if err != nil {
-		console.Exit(fmt.Sprintf("Failed to run internal with %v: %s", os.Args, err.Error()))
+	// 1.初始化viper 以获取env环境变量
+	config.InitConfig()
+
+	// gin 实例
+	gin.SetMode(config.GetString("APP_GINMODEL", "debug")) // debug, release
+	router := gin.New()
+
+	// 初始化路由绑定
+	initialize.SetupRoute(router)
+
+	// 初始化 Logger
+	initialize.SetupLogger()
+
+	// 初始化数据库
+	initialize.SetupDB()
+
+	// 初始化Validator
+	initialize.SetupValidators()
+
+	// 创建 HTTP 服务器
+	srv := &http.Server{
+		Addr:    ":" + config.GetString("APP_PORT", "8000"),
+		Handler: router,
 	}
+
+	// 启动服务器
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			logger.ErrorString("gin", "serve", err.Error())
+			console.Exit("Unable to start server, error:" + err.Error())
+		}
+	}()
+
+	// 等待中断信号以优雅地关闭服务器
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	logger.InfoString("gin", "shutdown", "Shutting down server...")
+
+	// 创建3秒的超时上下文
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	if err := srv.Shutdown(ctx); err != nil {
+		logger.ErrorString("gin", "shutdown", "Server forced to shutdown: "+err.Error())
+	}
+
+	logger.InfoString("gin", "shutdown", "Server exiting")
 }

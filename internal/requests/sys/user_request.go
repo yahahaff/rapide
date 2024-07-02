@@ -5,18 +5,18 @@ import (
 )
 
 type UserUpdateProfileRequest struct {
-	Name         string `json:"name" validate:"required" `
+	Name         string `json:"name" validate:"required,max=15" `
 	Introduction string `json:"introduction" validate:"required" `
 }
 
 type UserUpdateEmailRequest struct {
-	Email      string `json:"email" validate:"required"`
-	VerifyCode string `json:"verify_code" validate:"required"`
+	Email      string `json:"email" validate:"required,email,max=254"`
+	VerifyCode string `json:"verify_code" validate:"required,max=6"`
 }
 
 type UserUpdatePhoneRequest struct {
-	Phone      string `json:"phone" validate:"required"`
-	VerifyCode string `json:"verify_code" validate:"required"`
+	Phone      string `json:"phone" validate:"required,max=11"`
+	VerifyCode string `json:"verify_code" validate:"required,max=6"`
 }
 
 type UserUpdatePasswordRequest struct {

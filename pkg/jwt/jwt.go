@@ -52,8 +52,8 @@ type JWTCustomClaims struct {
 
 func NewJWT() *JWT {
 	return &JWT{
-		SignKey:    []byte(config.GetString("internal.key")),
-		MaxRefresh: time.Duration(config.GetInt64("jwt.max_refresh_time")) * time.Minute,
+		SignKey:    []byte(config.GetString("APP_KEY", "123456")),
+		MaxRefresh: time.Duration(config.GetInt64("JWT_MAX_REFRESH_TIME", 86400)) * time.Minute,
 	}
 }
 
@@ -134,10 +134,10 @@ func (jwt *JWT) IssueToken(userID string, userName string) string {
 		userName,
 		expireAtTime,
 		jwtpkg.StandardClaims{
-			NotBefore: app.TimenowInTimezone().Unix(),    // 签名生效时间
-			IssuedAt:  app.TimenowInTimezone().Unix(),    // 首次签名时间（后续刷新 Token 不会更新）
-			ExpiresAt: expireAtTime,                      // 签名过期时间
-			Issuer:    config.GetString("internal.name"), // 签名颁发者
+			NotBefore: app.TimenowInTimezone().Unix(),         // 签名生效时间
+			IssuedAt:  app.TimenowInTimezone().Unix(),         // 首次签名时间（后续刷新 Token 不会更新）
+			ExpiresAt: expireAtTime,                           // 签名过期时间
+			Issuer:    config.GetString("APP_NAME", "Rapide"), // 签名颁发者
 		},
 	}
 
@@ -161,13 +161,7 @@ func (jwt *JWT) createToken(claims JWTCustomClaims) (string, error) {
 // expireAtTime 过期时间
 func (jwt *JWT) expireAtTime() int64 {
 	timenow := app.TimenowInTimezone()
-
-	var expireTime int64
-	if config.GetBool("internal.debug") {
-		expireTime = config.GetInt64("jwt.debug_expire_time")
-	} else {
-		expireTime = config.GetInt64("jwt.expire_time")
-	}
+	expireTime := config.GetInt64("JWT_EXPIRE_TIME", 120)
 
 	expire := time.Duration(expireTime) * time.Minute
 	return timenow.Add(expire).Unix()

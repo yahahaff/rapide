@@ -39,8 +39,9 @@ func Validate(c *gin.Context, obj interface{}) bool {
 		errors := err.(validator.ValidationErrors)
 		for _, e := range errors {
 			errMsg := extractValidationErrorMessage(e)
-			fieldErrors[e.Field()] = []string{errMsg}
+			fieldErrors[e.Field()] = append(fieldErrors[e.Field()], errMsg)
 		}
+
 		response.ValidationError(c, fieldErrors)
 		return false
 	}

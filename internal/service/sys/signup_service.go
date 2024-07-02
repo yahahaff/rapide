@@ -4,6 +4,7 @@ import (
 	sysDao "github.com/yahahaff/rapide/internal/dao/sys"
 	sysMod "github.com/yahahaff/rapide/internal/models/sys"
 	"github.com/yahahaff/rapide/pkg/database"
+	"github.com/yahahaff/rapide/pkg/handleerror"
 )
 
 type SignupService struct{}
@@ -21,7 +22,11 @@ func (ss *SignupService) IsEmailExist(email string) (sysMod.User, error) {
 }
 
 // Signup 注册
-func (ss *SignupService) Signup(userModel sysMod.User) (data sysMod.User, err error) {
-	err = database.DB.Create(&userModel).Error
-	return userModel, err
+func (ss *SignupService) Signup(userModel sysMod.User) (data sysMod.User, errMsg string) {
+	err := database.DB.Create(&userModel).Error
+	errMsg = handleerror.GormError(err)
+	if errMsg != "" {
+		return sysMod.User{}, errMsg
+	}
+	return userModel, errMsg
 }
