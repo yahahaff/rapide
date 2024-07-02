@@ -1507,34 +1507,41 @@ const docTemplate = `{
                 "name",
                 "password",
                 "password_confirm",
-                "phone",
                 "role_id",
                 "verify_code"
             ],
             "properties": {
                 "dept_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 2
                 },
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 254
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 15
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "password_confirm": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "phone": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 11
                 },
                 "role_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 2
                 },
                 "verify_code": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 6
                 }
             }
         },
@@ -1546,10 +1553,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 254
                 },
                 "verify_code": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 6
                 }
             }
         },
@@ -1580,10 +1589,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "phone": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 11
                 },
                 "verify_code": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 6
                 }
             }
         },
@@ -1598,7 +1609,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 15
                 }
             }
         },
