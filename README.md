@@ -4,9 +4,11 @@
 </div>
 
 <div align="center">
+
   <img src="https://github.com/yahahaff/rapide/workflows/Go/badge.svg" alt="CI/CD Badge">
-  <img src="https://img.shields.io/github/license/yahahaff/rapide?style=flat-square" alt="GitHub License">
-  <img src="https://img.shields.io/github/go-mod/go-version/yahahaff/rapide" alt="GitHub go.mod Go version">
+  <img alt="GitHub go.mod Go version" src="https://img.shields.io/github/go-mod/go-version/yahahaff/rapide?filename=backend%2Fgo.mod">
+  <img alt="GitHub License" src="https://img.shields.io/github/license/yahahaff/rapide">
+
   <a href="https://sourcegraph.com/github.com/yahahaff/rapide/-/tree/codec?badge"><img src="https://sourcegraph.com/github.com/yahahaff/rapide/-/badge.svg?v=4" alt="Sourcegraph"></a>
   <a href="https://codecov.io/gh/yahahaff/rapide"><img src="https://codecov.io/gh/yahahaff/rapide/branch/main/graph/badge.svg?v=4" alt="codecov"></a>
   <a href="https://pkg.go.dev/github.com/yahahaff/rapide/codec"><img src="https://pkg.go.dev/badge/github.com/yahahaff/rapide/codec.svg" alt="Go Reference"></a>
