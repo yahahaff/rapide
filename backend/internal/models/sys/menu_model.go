@@ -14,7 +14,7 @@ type Menu struct {
 	Redirect  string   `json:"redirect" gorm:"size:255"`
 	Order     int      `json:"order" gorm:"default:0"` // 用于菜单排序
 	Meta      MenuMeta `json:"meta" gorm:"foreignKey:ID"`
-	Children  []*Menu  `json:"children" gorm:"foreignKey:ParentID"`
+	Children  []*Menu  `json:"children" gorm:"foreignKey:ParentID;references:ID"` // 使用 ParentID 作为外键，ID 作为引用字段
 	models.CommonTimestampsField
 }
 
