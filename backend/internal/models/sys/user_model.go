@@ -12,7 +12,7 @@ type User struct {
 	Username    string `json:"username" `
 	Password    string `json:"-" `
 	RealName    string `json:"real_name" `
-	Roles       []Role `gorm:"many2many:user_roles;" json:"roles"`
+	Roles       []Role `gorm:"many2many:sys_user_roles;" json:"roles"`
 	OtpEnabled  bool   `json:"otpEnabled" gorm:"default:false;"`
 	OtpVerified bool   `json:"otpVerified" gorm:"default:false;"`
 	OtpSecret   string `json:"-"`
