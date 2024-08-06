@@ -9,7 +9,7 @@ import (
 type Role struct {
 	models.BaseModel
 	RoleName    string       `json:"role_name" gorm:"unique"`
-	Users       []User       `json:"-" gorm:"many2many:user_roles;" `
+	Users       []User       `json:"-" gorm:"many2many:sys_user_roles;" `
 	Status      int          `json:"status"     ` //
 	Permissions []Permission `json:"permissions" gorm:"many2many:sys_role_permissions;" `
 	models.CommonTimestampsField
