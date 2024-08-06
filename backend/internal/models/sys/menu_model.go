@@ -12,7 +12,6 @@ type Menu struct {
 	Path      string   `json:"path" gorm:"size:255;not null"`
 	Component string   `json:"component" gorm:"size:255"`
 	Redirect  string   `json:"redirect" gorm:"size:255"`
-	Order     int      `json:"order" gorm:"default:0"` // 用于菜单排序
 	Meta      MenuMeta `json:"meta" gorm:"foreignKey:ID"`
 	Children  []*Menu  `json:"children" gorm:"foreignKey:ParentID;references:ID"` // 使用 ParentID 作为外键，ID 作为引用字段
 	models.CommonTimestampsField
@@ -21,6 +20,7 @@ type Menu struct {
 // MenuMeta 表示菜单元数据
 type MenuMeta struct {
 	models.BaseModel
+	Order                    int    `json:"order" gorm:"default:0"` // 用于菜单排序
 	Title                    string `json:"title" gorm:"size:255"`
 	Icon                     string `json:"icon" gorm:"size:255"`
 	KeepAlive                bool   `json:"keep_alive" gorm:"default:false"`
