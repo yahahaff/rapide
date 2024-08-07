@@ -79,3 +79,4 @@ __debug_bin
 .sass-cache/*
 node_modules/
 
+!/frontend/apps/web-antd/node_modules/
