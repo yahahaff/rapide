@@ -10,6 +10,10 @@
         "title": "角色管理",
         "roleManger": "角色管理"
       },
+      "dept": {
+        "title": "部门管理",
+        "deptManger": "部门管理"
+      },
       "menu": {
         "title": "菜单管理",
         "menuManger": "菜单管理"

@@ -10,6 +10,10 @@
         "title": "Role",
         "roleManger": "Role"
       },
+      "dept": {
+        "title": "Dept",
+        "deptManger": "Dept"
+      },
       "menu": {
         "title": "Menu",
         "menuManger": "Menu"
