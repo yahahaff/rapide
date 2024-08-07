@@ -80,3 +80,5 @@ __debug_bin
 node_modules/
 
 !/frontend/apps/web-antd/node_modules/
+!/frontend/.turbo/
+!/frontend/apps/web-antd/dist/
