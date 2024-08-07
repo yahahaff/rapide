@@ -13,7 +13,17 @@
       "menu": {
         "title": "Menu",
         "menuManger": "Menu"
+      },
+      "permissions": {
+        "title": "Permissions",
+        "permissionsManger": "Permissions"
       }
+    },
+    "logs": {
+      "title": "Logs"
     }
   }
 }
+
+
+
