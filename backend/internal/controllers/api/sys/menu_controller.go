@@ -13,7 +13,8 @@ type MenuController struct {
 }
 
 func (mc *MenuController) GetMenuList(c *gin.Context) {
-	data, _ := service.Entrance.SysService.MenuService.GetMenuList()
+	//roleID := c.GetUint("current_user_role_id")
+	data, _ := service.Entrance.SysService.MenuService.GetMenuTreeByRoleID(1)
 	response.OK(c, data)
 	return
 

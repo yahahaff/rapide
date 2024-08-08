@@ -12,6 +12,7 @@ type Role struct {
 	Users       []User       `json:"-" gorm:"many2many:sys_user_roles;" `
 	Status      int          `json:"status"     `
 	Permissions []Permission `json:"permissions" gorm:"many2many:sys_role_permissions;" `
+	Menus       []Menu       `json:"menus" gorm:"many2many:sys_role_menus;"` // 添加菜单关联
 	models.CommonTimestampsField
 }
 
