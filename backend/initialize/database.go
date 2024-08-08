@@ -18,7 +18,7 @@ import (
 // SetupDB 初始化数据库和 ORM
 func SetupDB() {
 	var dbConfig gorm.Dialector
-	switch config.GetString("DB_DRIVER", "sqlite") {
+	switch config.GetString("DB_DRIVER", "mysql") {
 	case "mysql":
 		// 构建 DSN 信息
 		dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?charset=%v&parseTime=True&multiStatements=true&loc=Local",
@@ -56,7 +56,7 @@ func SetupDB() {
 	// 非Release环境开启gorm 自动迁移表
 	if !app.IsRelease() {
 		err := database.DB.AutoMigrate(&sys.User{}, &sys.Role{},
-			&sys.OperationLog{}, &sys.Menu{}, &sys.MenuMeta{},
+			&sys.OperationLog{}, &sys.Menu{},
 			&sys.Permission{},
 		)
 		if err != nil {
