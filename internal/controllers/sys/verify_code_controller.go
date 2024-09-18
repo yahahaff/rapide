@@ -3,7 +3,7 @@ package sys
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/yahahaff/rapide/internal/controllers/api"
+	"github.com/yahahaff/rapide/internal/controllers"
 	"github.com/yahahaff/rapide/internal/requests/sys"
 	"github.com/yahahaff/rapide/internal/requests/validators"
 	"github.com/yahahaff/rapide/internal/response"
@@ -14,7 +14,7 @@ import (
 
 // VerifyCodeController 用户控制器
 type VerifyCodeController struct {
-	api.BaseAPIController
+	controllers.BaseAPIController
 }
 
 type ErrorResponse struct {

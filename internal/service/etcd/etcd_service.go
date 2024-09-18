@@ -1,4 +1,4 @@
-package http
+package etcd
 
 import (
 	"encoding/base64"

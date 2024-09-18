@@ -3,7 +3,7 @@ package sys
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/yahahaff/rapide/internal/controllers/api"
+	"github.com/yahahaff/rapide/internal/controllers"
 	"github.com/yahahaff/rapide/internal/requests/sys"
 	"github.com/yahahaff/rapide/internal/requests/validators"
 	"github.com/yahahaff/rapide/internal/response"
@@ -13,7 +13,7 @@ import (
 )
 
 type UsersController struct {
-	api.BaseAPIController
+	controllers.BaseAPIController
 }
 
 func (ctrl *UsersController) RefreshToken(c *gin.Context) {

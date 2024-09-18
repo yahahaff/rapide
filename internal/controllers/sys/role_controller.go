@@ -2,7 +2,7 @@ package sys
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/yahahaff/rapide/internal/controllers/api"
+	"github.com/yahahaff/rapide/internal/controllers"
 	sysDao "github.com/yahahaff/rapide/internal/dao/sys"
 	"github.com/yahahaff/rapide/internal/models/sys"
 	sysReq "github.com/yahahaff/rapide/internal/requests/sys"
@@ -11,7 +11,7 @@ import (
 )
 
 type RoleController struct {
-	api.BaseAPIController
+	controllers.BaseAPIController
 }
 
 func (rc *RoleController) GetRole(c *gin.Context) {

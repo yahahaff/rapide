@@ -1,4 +1,4 @@
-package http
+package etcd
 
 type EtcdPutRequest struct {
 	Key   string `json:"key" validate:"required,max=255"`

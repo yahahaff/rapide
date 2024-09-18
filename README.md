@@ -28,7 +28,6 @@
 git clone https://github.com/yahahaff/rapide.git
 cd rapide
 go mod tidy
-swag init
 air
 ```
 ### Envs

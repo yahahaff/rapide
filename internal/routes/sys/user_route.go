@@ -2,7 +2,7 @@ package sys
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/yahahaff/rapide/internal/controllers/api/sys"
+	"github.com/yahahaff/rapide/internal/controllers/sys"
 )
 
 func UserRouter(Router *gin.RouterGroup) {

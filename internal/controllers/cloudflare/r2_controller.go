@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/yahahaff/rapide/internal/controllers/api"
+	"github.com/yahahaff/rapide/internal/controllers"
 	"github.com/yahahaff/rapide/internal/response"
 	"github.com/yahahaff/rapide/pkg/cloudflare"
 	"mime/multipart"
 )
 
 type R2Controller struct {
-	api.BaseAPIController
+	controllers.BaseAPIController
 }
 
 // R2Config holds the configuration for accessing Cloudflare R2

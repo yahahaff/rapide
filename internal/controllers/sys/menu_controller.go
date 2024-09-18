@@ -2,14 +2,14 @@ package sys
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/yahahaff/rapide/internal/controllers/api"
+	"github.com/yahahaff/rapide/internal/controllers"
 	"github.com/yahahaff/rapide/internal/response"
 	"github.com/yahahaff/rapide/internal/service"
 )
 
 // MenuController 菜单控制器
 type MenuController struct {
-	api.BaseAPIController
+	controllers.BaseAPIController
 }
 
 func (mc *MenuController) GetMenuList(c *gin.Context) {

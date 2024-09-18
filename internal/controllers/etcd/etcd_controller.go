@@ -1,10 +1,10 @@
-package http
+package etcd
 
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/yahahaff/rapide/internal/controllers/api"
-	reqHttp "github.com/yahahaff/rapide/internal/requests/http"
+	"github.com/yahahaff/rapide/internal/controllers"
+	reqHttp "github.com/yahahaff/rapide/internal/requests/etcd"
 	"github.com/yahahaff/rapide/internal/requests/validators"
 	"github.com/yahahaff/rapide/internal/response"
 	"github.com/yahahaff/rapide/internal/service"
@@ -13,13 +13,12 @@ import (
 )
 
 type EtcdController struct {
-	api.BaseAPIController
+	controllers.BaseAPIController
 }
 
 func (tc *EtcdController) GetKeyList(c *gin.Context) {
-
 	// 查询所有keys
-	data, err := service.Entrance.HttpService.GetKeyList("AA==", "AA==")
+	data, err := service.Entrance.EtcdService.GetKeyList("AA==", "AA==")
 	if err != nil {
 		if err.Error() == "unexpected response format" {
 			logger.ErrorString("etcd", "etcd", err.Error())
@@ -36,7 +35,7 @@ func (tc *EtcdController) GetKeyList(c *gin.Context) {
 
 func (tc *EtcdController) GetKeyDetail(c *gin.Context) {
 	key := c.Query("key")
-	data, err := service.Entrance.HttpService.GetKeyDetail(key)
+	data, err := service.Entrance.EtcdService.GetKeyDetail(key)
 	if err != nil {
 		if err.Error() == "unexpected response format" {
 			logger.ErrorString("etcd", "etcd", err.Error())
@@ -61,7 +60,7 @@ func (tc *EtcdController) PutKey(c *gin.Context) {
 		return
 	}
 
-	data, err := service.Entrance.HttpService.PutData(request.Key, request.Value)
+	data, err := service.Entrance.EtcdService.PutData(request.Key, request.Value)
 	if err != nil {
 		if err.Error() == "unexpected response format" {
 			logger.ErrorString("http-request", "etcd", err.Error())
@@ -86,7 +85,7 @@ func (tc *EtcdController) DeleteKey(c *gin.Context) {
 		return
 	}
 
-	data, err := service.Entrance.HttpService.DeleteData(request.Key)
+	data, err := service.Entrance.EtcdService.DeleteData(request.Key)
 	if err != nil {
 		if err.Error() == "unexpected response format" {
 			logger.ErrorString("http-request", "etcd", err.Error())

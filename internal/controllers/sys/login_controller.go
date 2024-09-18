@@ -2,7 +2,7 @@ package sys
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/yahahaff/rapide/internal/controllers/api"
+	"github.com/yahahaff/rapide/internal/controllers"
 	"github.com/yahahaff/rapide/internal/middlewares"
 	"github.com/yahahaff/rapide/internal/requests/sys"
 	"github.com/yahahaff/rapide/internal/requests/validators"
@@ -13,7 +13,7 @@ import (
 
 // LoginController 用户控制器
 type LoginController struct {
-	api.BaseAPIController
+	controllers.BaseAPIController
 }
 
 func (lc *LoginController) LoginByPhone(c *gin.Context) {

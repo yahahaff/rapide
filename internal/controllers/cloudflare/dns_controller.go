@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/yahahaff/rapide/internal/controllers/api"
-	"github.com/yahahaff/rapide/internal/requests/http/cloudflare"
+	"github.com/yahahaff/rapide/internal/controllers"
+	"github.com/yahahaff/rapide/internal/requests/cloudflare"
 	"github.com/yahahaff/rapide/internal/requests/validators"
 	"github.com/yahahaff/rapide/internal/response"
 	"github.com/yahahaff/rapide/pkg/config"
@@ -14,7 +14,7 @@ import (
 )
 
 type DnsController struct {
-	api.BaseAPIController
+	controllers.BaseAPIController
 }
 
 type DnsResponse struct {

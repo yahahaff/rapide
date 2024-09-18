@@ -2,7 +2,7 @@ package cloudflare
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/yahahaff/rapide/internal/controllers/api/http/cloudflare"
+	"github.com/yahahaff/rapide/internal/controllers/cloudflare"
 )
 
 func ZonesRouter(Router *gin.RouterGroup) {
