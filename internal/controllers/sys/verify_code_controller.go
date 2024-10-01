@@ -48,21 +48,6 @@ func (vc *VerifyCodeController) ShowCaptcha(c *gin.Context) {
 	response.OK(c, data)
 }
 
-func (vc *VerifyCodeController) SendUsingPhone(c *gin.Context) {
-
-	// 1. 验证表单
-	request := sys.VerifyCodePhoneRequest{}
-	if ok := validators.Validate(c, &request); !ok {
-		return
-	}
-	// 2. 发送 SMS
-	if ok := verifycode.NewVerifyCode().SendSMS(request.Phone); !ok {
-		response.Abort500(c, "发送短信失败~")
-	} else {
-		response.Success(c)
-	}
-}
-
 func (vc *VerifyCodeController) SendUsingEmail(c *gin.Context) {
 
 	// 1. 验证表单

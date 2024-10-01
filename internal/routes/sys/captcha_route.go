@@ -13,7 +13,6 @@ func CaptchaRouter(Router *gin.RouterGroup) {
 		vcc := new(sys.VerifyCodeController)
 		// 图片验证码，需要加限流
 		captchaGroup.POST("/image", vcc.ShowCaptcha)
-		captchaGroup.POST("/phone", vcc.SendUsingPhone)
 		captchaGroup.POST("/email", vcc.SendUsingEmail)
 
 	}

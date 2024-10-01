@@ -2,6 +2,7 @@ package sys
 
 type SysGroup struct {
 	AuthService
+	SignupService
 	UserService
 	MenuService
 	CasbinService

@@ -97,7 +97,5 @@ func (tc *EtcdController) DeleteKey(c *gin.Context) {
 		}
 		return
 	}
-
 	response.OK(c, data)
-
 }

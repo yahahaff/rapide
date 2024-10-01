@@ -6,7 +6,7 @@ import (
 	"github.com/yahahaff/rapide/internal/middlewares"
 )
 
-func AuthRouter(Router *gin.RouterGroup) {
+func LoginRouter(Router *gin.RouterGroup) {
 
 	//登录路由
 	{

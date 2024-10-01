@@ -1,4 +1,3 @@
-// Package logger 处理日志相关逻辑
 package logger
 
 import (
@@ -6,7 +5,6 @@ import (
 	"fmt"
 	"github.com/yahahaff/rapide/pkg/app"
 	"gopkg.in/natefinch/lumberjack.v2"
-
 	"os"
 	"strings"
 	"time"
@@ -72,27 +70,26 @@ func customTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 
 // getLogWriter 获取日志写入介质
 func getLogWriter(filename string, maxSize, maxBackup, maxAge int, compress bool, logType string) zapcore.WriteSyncer {
+	// 自动按日期命名日志文件
 	if logType == "daily" {
-		filename = strings.ReplaceAll(filename, "rapide.log", time.Now().Format("2006-01-02.log"))
-		return zapcore.AddSync(&lumberjack.Logger{
-			Filename:   filename,
-			MaxSize:    maxSize,
-			MaxBackups: maxBackup,
-			MaxAge:     maxAge,
-			Compress:   compress,
-			LocalTime:  true,
-		})
+		// 将文件名替换为带有日期后缀的格式
+		filename = strings.ReplaceAll(filename, ".log", fmt.Sprintf("-%s.log", time.Now().Format("20060102")))
 	}
 
-	file, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		panic(err)
+	// 使用 lumberjack 进行日志轮转
+	lumberjackLogger := &lumberjack.Logger{
+		Filename:   filename,  // 日志文件名
+		MaxSize:    maxSize,   // 轮转之前日志文件的最大大小 (单位: MB)
+		MaxBackups: maxBackup, // 保留的旧日志文件最大数量
+		MaxAge:     maxAge,    // 保留的旧日志文件的最大天数
+		Compress:   compress,  // 是否压缩旧日志文件
+		LocalTime:  true,      // 使用本地时间进行日志切割
 	}
 
 	if app.IsLocal() {
 		return zapcore.AddSync(os.Stdout)
 	}
-	return zapcore.AddSync(file)
+	return zapcore.AddSync(lumberjackLogger)
 }
 
 // Dump 调试专用，不会中断程序，会在终端打印出 warning 消息。
