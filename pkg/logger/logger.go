@@ -86,6 +86,7 @@ func getLogWriter(filename string, maxSize, maxBackup, maxAge int, compress bool
 		LocalTime:  true,      // 使用本地时间进行日志切割
 	}
 
+	// 本地使用console输出，不写入日志文件
 	if app.IsLocal() {
 		return zapcore.AddSync(os.Stdout)
 	}

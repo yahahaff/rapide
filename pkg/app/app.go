@@ -6,10 +6,7 @@ import (
 )
 
 func IsLocal() bool {
-	return config.GetString("APP_ENV", "debug") == "debug"
-}
-func IsRelease() bool {
-	return config.GetString("APP_ENV", "debug") == "release"
+	return config.GetString("APP_ENV", "local") == "local"
 }
 
 // TimenowInTimezone 获取当前时间，支持时区

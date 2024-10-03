@@ -53,8 +53,8 @@ func SetupDB() {
 	// 设置每个链接的过期时间
 	database.SQLDB.SetConnMaxLifetime(time.Duration(config.GetInt("DB_CONNECTION_MAX_LIFE_SECONDS", 3600)) * time.Second)
 
-	// 非Release环境开启gorm 自动迁移表
-	if !app.IsRelease() {
+	// IsLocal本地环境 执行自动迁移表
+	if app.IsLocal() {
 		err := database.DB.AutoMigrate(&sys.User{}, &sys.Role{},
 			&sys.OperationLog{}, &sys.Menu{},
 			&sys.Permission{},
