@@ -5,8 +5,8 @@ import (
 	"github.com/yahahaff/rapide/internal/controllers"
 	"github.com/yahahaff/rapide/internal/requests/sys"
 	"github.com/yahahaff/rapide/internal/requests/validators"
-	"github.com/yahahaff/rapide/internal/response"
 	"github.com/yahahaff/rapide/internal/service"
+	"github.com/yahahaff/rapide/pkg/response"
 )
 
 type OperationLogController struct {

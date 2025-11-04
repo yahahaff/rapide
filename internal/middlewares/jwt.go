@@ -2,12 +2,13 @@ package middlewares
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/yahahaff/rapide/internal/dao/sys"
-	"github.com/yahahaff/rapide/internal/response"
 	"github.com/yahahaff/rapide/pkg/jwt"
 	"github.com/yahahaff/rapide/pkg/logger"
-	"strconv"
+	"github.com/yahahaff/rapide/pkg/response"
 )
 
 func AuthJWT() gin.HandlerFunc {
@@ -39,9 +40,9 @@ func AuthJWT() gin.HandlerFunc {
 
 		// 将用户信息存入 gin.context 里，后续 auth 包将从这里拿到当前用户数据
 		c.Set("current_user_id", userModel.GetStringID())
-		c.Set("current_user_name", userModel.Username)
+		c.Set("current_user_name", userModel.UserName)
 		c.Set("current_user", userModel)
-		c.Set("current_user_role_id", userModel.RoleID)
+		c.Set("current_user_role_id", 1)
 		c.Next()
 	}
 }

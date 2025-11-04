@@ -2,10 +2,11 @@ package middlewares
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/yahahaff/rapide/internal/response"
-	"github.com/yahahaff/rapide/pkg/casbin"
 	"net/url"
+
+	"github.com/gin-gonic/gin"
+	"github.com/yahahaff/rapide/pkg/casbin"
+	"github.com/yahahaff/rapide/pkg/response"
 )
 
 func PermissionCheck() gin.HandlerFunc {

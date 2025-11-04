@@ -1,13 +1,14 @@
 package middlewares
 
 import (
-	"github.com/yahahaff/rapide/internal/response"
-	"github.com/yahahaff/rapide/pkg/logger"
 	"net"
 	"net/http/httputil"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/yahahaff/rapide/pkg/logger"
+	"github.com/yahahaff/rapide/pkg/response"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

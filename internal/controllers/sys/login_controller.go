@@ -6,9 +6,9 @@ import (
 	"github.com/yahahaff/rapide/internal/middlewares"
 	"github.com/yahahaff/rapide/internal/requests/sys"
 	"github.com/yahahaff/rapide/internal/requests/validators"
-	"github.com/yahahaff/rapide/internal/response"
 	"github.com/yahahaff/rapide/internal/service"
 	"github.com/yahahaff/rapide/pkg/jwt"
+	"github.com/yahahaff/rapide/pkg/response"
 )
 
 // LoginController 用户控制器
@@ -28,7 +28,7 @@ func (lc *LoginController) LoginByPhone(c *gin.Context) {
 	user, err := service.Entrance.SysService.AuthService.LoginByPhone(request.Phone)
 	if err != nil {
 		// 失败，显示错误提示
-		response.Error(c, response.WithMessage("账号不存在"))
+		response.Abort400(c, "账号不存在")
 		return
 
 	} else {
@@ -37,7 +37,7 @@ func (lc *LoginController) LoginByPhone(c *gin.Context) {
 			return
 		}
 		// 登录成功
-		token := jwt.NewJWT().IssueToken(user.GetStringID(), user.Username)
+		token := jwt.NewJWT().IssueToken(user.GetStringID(), user.UserName)
 
 		data := gin.H{
 			"token": token,
@@ -78,23 +78,13 @@ func (lc *LoginController) LoginByPassword(c *gin.Context) {
 	}
 
 	// 正常登录流程，生成JWT
-	token := jwt.NewJWT().IssueToken(user.GetStringID(), user.Username)
+	token := jwt.NewJWT().IssueToken(user.GetStringID(), user.UserName)
 
 	userData := gin.H{
-		"accessToken":  token,
-		"refreshToken": token,
+		"accessToken": token,
 	}
 
 	response.OK(c, userData)
-	return
-
-}
-
-func (lc *LoginController) GetRoleCodes(c *gin.Context) {
-
-	var data []string
-	data, _ = service.Entrance.SysService.AuthService.GetRolePermissions(1)
-	response.OK(c, data)
 	return
 
 }

@@ -2,6 +2,7 @@ package sys
 
 import (
 	"errors"
+
 	"github.com/gin-gonic/gin"
 	sysDao "github.com/yahahaff/rapide/internal/dao/sys"
 	"github.com/yahahaff/rapide/internal/models/sys"
@@ -63,19 +64,3 @@ func (as *AuthService) CurrentUID(c *gin.Context) string {
 }
 
 // GetRolePermissions 获取角色权限
-func (as *AuthService) GetRolePermissions(roleId uint) ([]string, error) {
-	var role sys.Role
-
-	// 查询角色并预加载其权限
-	if err := database.DB.Preload("Permissions").First(&role, roleId).Error; err != nil {
-		return nil, err
-	}
-
-	// 提取权限编码
-	var codes []string
-	for _, perm := range role.Permissions {
-		codes = append(codes, perm.Code)
-	}
-
-	return codes, nil
-}

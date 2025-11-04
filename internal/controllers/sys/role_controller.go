@@ -7,7 +7,7 @@ import (
 	"github.com/yahahaff/rapide/internal/models/sys"
 	sysReq "github.com/yahahaff/rapide/internal/requests/sys"
 	"github.com/yahahaff/rapide/internal/requests/validators"
-	"github.com/yahahaff/rapide/internal/response"
+	"github.com/yahahaff/rapide/pkg/response"
 )
 
 type RoleController struct {

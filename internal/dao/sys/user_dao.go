@@ -31,21 +31,21 @@ func GetById(userID int) (userModel sys.User) {
 	return
 }
 
-// GetByUsername 通过 username 获取用户Model
-func GetByUsername(username string) (userModel sys.User) {
-	database.DB.Where("username", username).First(&userModel)
+// GetByUsername 通过 user_name 获取用户Model
+func GetByUsername(user_name string) (userModel sys.User) {
+	database.DB.Where("user_name = ?", user_name).First(&userModel)
 	return
 }
 
 // GetOtpSecret 通过 loginId 获取用户opt密钥用于验证OPT
 func GetOtpSecret(loginId string) (userModel sys.User) {
-	database.DB.First(&userModel, "name", loginId)
+	database.DB.Where("user_name = ?", loginId).First(&userModel)
 	return
 }
 
 // UpdateOpt 更新OTP info
 func UpdateOpt(name, key, url string) (userModel sys.User) {
-	result := database.DB.First(&userModel, "name", name)
+	result := database.DB.Where("user_name = ?", name).First(&userModel)
 	if result.Error != nil {
 		return
 	}
@@ -59,7 +59,7 @@ func UpdateOpt(name, key, url string) (userModel sys.User) {
 
 // DisableOpt 关闭OTP info
 func DisableOpt(name string) (userModel sys.User) {
-	result := database.DB.First(&userModel, "name", name)
+	result := database.DB.Where("user_name = ?", name).First(&userModel)
 	if result.Error != nil {
 		return
 	}
@@ -72,7 +72,7 @@ func DisableOpt(name string) (userModel sys.User) {
 
 // SetOptStatus 设置用户OPT 状态
 func SetOptStatus(name string) (userModel sys.User) {
-	result := database.DB.First(&userModel, "name", name)
+	result := database.DB.Where("user_name = ?", name).First(&userModel)
 	if result.Error != nil {
 		return
 	}

@@ -5,14 +5,24 @@ import (
 	"github.com/yahahaff/rapide/pkg/database"
 )
 
-// Role 角色
+// Role 角色 - 适配 vue-vben-admin 5.x
 type Role struct {
 	models.BaseModel
-	RoleName    string       `json:"role_name" gorm:"unique"`
-	Users       []User       `json:"-" gorm:"many2many:sys_user_roles;" `
-	Status      int          `json:"status"     `
-	Permissions []Permission `json:"permissions" gorm:"many2many:sys_role_permissions;" `
-	Menus       []Menu       `json:"menus" gorm:"many2many:sys_role_menus;"` // 添加菜单关联
+
+	// 基本信息
+	RoleName  string `json:"roleName" gorm:"type:varchar(255);unique;comment:'角色名称'"`
+	RoleValue string `json:"roleValue" gorm:"type:varchar(255);unique;comment:'角色值'"`
+	RoleCode  string `json:"roleCode" gorm:"type:varchar(255);unique;comment:'角色编码'"`
+
+	// 父子关系
+	ParentID *uint64 `json:"parentId" gorm:"comment:'父角色ID'"`
+	Children []*Role `json:"children" gorm:"foreignKey:ParentID"`
+
+	// 其他信息
+	Sort   int    `json:"sort" gorm:"comment:'排序'"`
+	Status int    `json:"status" gorm:"default:1;comment:'状态 0:禁用 1:启用'"`
+	Remark string `json:"remark" gorm:"type:varchar(500);comment:'备注'"`
+
 	models.CommonTimestampsField
 }
 
@@ -21,7 +31,35 @@ func (*Role) TableName() string {
 	return "sys_role"
 }
 
-// Create 创建部门，通过 ID 来判断是否创建成功
+// Create 创建角色
 func (roleModel *Role) Create() {
 	database.DB.Create(&roleModel)
+}
+
+// Update 更新角色
+func (roleModel *Role) Update() {
+	database.DB.Save(&roleModel)
+}
+
+// Delete 删除角色
+func (roleModel *Role) Delete() {
+	database.DB.Delete(&roleModel)
+}
+
+// AssignMenus 为角色分配菜单
+func (roleModel *Role) AssignMenus(menuIDs []uint64) error {
+	// 清除现有菜单关联
+	err := database.DB.Model(roleModel).Association("Menus").Clear()
+	if err != nil {
+		return err
+	}
+
+	// 添加新的菜单关联
+	var menus []*Menu
+	err = database.DB.Where("id IN ?", menuIDs).Find(&menus).Error
+	if err != nil {
+		return err
+	}
+
+	return database.DB.Model(roleModel).Association("Menus").Append(menus)
 }

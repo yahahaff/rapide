@@ -2,6 +2,7 @@ package sys
 
 import (
 	"fmt"
+
 	sysDao "github.com/yahahaff/rapide/internal/dao/sys"
 	"github.com/yahahaff/rapide/internal/models/sys"
 	"github.com/yahahaff/rapide/pkg/database"
@@ -11,6 +12,17 @@ import (
 type UserService struct{}
 
 var users []sys.User
+
+// GetUserRoleID 获取用户的角色ID
+func (us *UserService) GetUserRoleID(userID uint64) (uint64, error) {
+	var user sys.User
+	result := database.DB.First(&user, userID)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	roleID := 1
+	return uint64(roleID), nil
+}
 
 // GetUserList 获取用户列表
 func (us *UserService) GetUserList(page int, size int, sort, order string) (data interface{}, pager paginator.Paging, err error) {

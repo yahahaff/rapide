@@ -6,14 +6,11 @@ import (
 )
 
 func MenuRouter(Router *gin.RouterGroup) {
-
-	//登录路由
+	// 菜单路由
 	{
-		authGroup := Router.Group("menu")
-		smc := new(sys.MenuController)
-
-		authGroup.GET("/all", smc.GetMenuList)
+		menuGroup := Router.Group("menu")
+		mc := new(sys.MenuController)
+		menuGroup.GET("/all", mc.GetUserMenus)
 
 	}
-
 }

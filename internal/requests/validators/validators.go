@@ -2,10 +2,11 @@ package validators
 
 import (
 	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/yahahaff/rapide/internal/response"
 	"github.com/yahahaff/rapide/pkg/logger"
+	"github.com/yahahaff/rapide/pkg/response"
 )
 
 type FieldError struct {
@@ -18,7 +19,7 @@ func Validate(c *gin.Context, obj interface{}) bool {
 	// 1. 解析请求，支持 JSON 数据、表单请求和 URL Query
 	if err := c.ShouldBind(obj); err != nil {
 		logger.WarnString("requests", "error", fmt.Sprintf("参数校验错误: %s", c.Request.URL))
-		response.BadRequest(c, "请求解析错误,请确认请求格式是否正确.上传文件请使用 multipart 标头,参数请使用JSON格式")
+		response.Abort400(c, "请求解析错误,请确认请求格式是否正确.上传文件请使用 multipart 标头,参数请使用JSON格式")
 		return false
 	}
 	// 创建验证器实例

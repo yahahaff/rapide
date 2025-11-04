@@ -2,13 +2,14 @@ package sys
 
 import (
 	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/yahahaff/rapide/internal/controllers"
 	"github.com/yahahaff/rapide/internal/requests/sys"
 	"github.com/yahahaff/rapide/internal/requests/validators"
-	"github.com/yahahaff/rapide/internal/response"
 	"github.com/yahahaff/rapide/pkg/captcha"
 	"github.com/yahahaff/rapide/pkg/logger"
+	"github.com/yahahaff/rapide/pkg/response"
 	"github.com/yahahaff/rapide/pkg/verifycode"
 )
 
@@ -36,7 +37,7 @@ func (vc *VerifyCodeController) ShowCaptcha(c *gin.Context) {
 	// 如果错误存在，记录错误日志
 	if err != nil {
 		logger.ErrorString("verify-codes", "error", fmt.Sprintf(err.Error()))
-		response.Error(c, response.WithMessage("获取验证码失败"))
+		response.Abort400(c, ("获取验证码失败"))
 		return
 	}
 

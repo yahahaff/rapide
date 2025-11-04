@@ -3,12 +3,13 @@ package initialize
 import (
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/yahahaff/rapide/internal/models/sys"
 	"github.com/yahahaff/rapide/pkg/app"
 	"github.com/yahahaff/rapide/pkg/config"
 	"github.com/yahahaff/rapide/pkg/database"
 	"github.com/yahahaff/rapide/pkg/logger"
-	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
@@ -18,7 +19,7 @@ import (
 // SetupDB 初始化数据库和 ORM
 func SetupDB() {
 	var dbConfig gorm.Dialector
-	switch config.GetString("DB_DRIVER", "mysql") {
+	switch config.GetString("DB_DRIVER", "sqlite") {
 	case "mysql":
 		// 构建 DSN 信息
 		dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?charset=%v&parseTime=True&multiStatements=true&loc=Local",
@@ -33,8 +34,8 @@ func SetupDB() {
 			DSN: dsn,
 		})
 	case "sqlite":
-		// 初始化 sqlite
-		database := config.GetString("DB_CONNECTION_FILE", "../database.db")
+		// 初始化 sqlite   window环境下启动前set CGO_ENABLED=1
+		database := config.GetString("DB_CONNECTION_FILE", "./sqlite.db")
 		dbConfig = sqlite.Open(database)
 	default:
 		panic(errors.New("database connection not supported"))
@@ -55,10 +56,12 @@ func SetupDB() {
 
 	// IsLocal本地环境 执行自动迁移表
 	if app.IsLocal() {
-		err := database.DB.AutoMigrate(&sys.User{}, &sys.Role{},
+		// First migrate tables without foreign key constraints
+		err := database.DB.AutoMigrate(&sys.Role{},
 			&sys.OperationLog{}, &sys.Menu{},
-			&sys.Permission{},
+			&sys.UserRole{}, &sys.RoleMenu{},
 		)
+
 		if err != nil {
 			fmt.Println(err.Error())
 			return

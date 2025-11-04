@@ -2,12 +2,13 @@
 package initialize
 
 import (
-	"github.com/yahahaff/rapide/internal/middlewares"
-	"github.com/yahahaff/rapide/internal/response"
-	"github.com/yahahaff/rapide/internal/routes"
-	"github.com/yahahaff/rapide/pkg/console"
 	"net/http"
 	"strings"
+
+	"github.com/yahahaff/rapide/internal/middlewares"
+	"github.com/yahahaff/rapide/internal/routes"
+	"github.com/yahahaff/rapide/pkg/console"
+	"github.com/yahahaff/rapide/pkg/response"
 
 	"github.com/gin-gonic/gin"
 )

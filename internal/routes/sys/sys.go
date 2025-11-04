@@ -13,6 +13,11 @@ func RouterGroup(router *gin.Engine) {
 	// 公开路由
 	auth := router.Group("/api/auth")
 	LoginRouter(auth)
+
+	// 注册路由
+	signup := router.Group("/api/auth")
+	SingupRouter(signup)
+
 	captcha := router.Group("/api/captcha")
 	CaptchaRouter(captcha)
 

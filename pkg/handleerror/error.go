@@ -2,9 +2,10 @@ package handleerror
 
 import (
 	"errors"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"time"
 )
 
 var (
@@ -28,7 +29,7 @@ func HandleError(c *gin.Context, err error) bool {
 func WsHandleError(ws *websocket.Conn, err error) bool {
 	if err != nil {
 		dt := time.Now().Add(time.Second)
-		if err := ws.WriteControl(websocket.CloseMessage, []byte(err.Error()), dt); err != nil {
+		if writeErr := ws.WriteControl(websocket.CloseMessage, []byte(err.Error()), dt); writeErr != nil {
 		}
 		return true
 	}

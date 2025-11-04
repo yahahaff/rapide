@@ -14,8 +14,6 @@ func LoginRouter(Router *gin.RouterGroup) {
 		lgc := new(sys.LoginController)
 		// 使用用户名密码登录
 		loginGroup.POST("/login", middlewares.LoginFailureCheck(), lgc.LoginByPassword)
-		// 获取角色权限
-		loginGroup.GET("/codes", lgc.GetRoleCodes)
 
 	}
 

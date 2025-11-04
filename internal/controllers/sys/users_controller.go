@@ -2,14 +2,15 @@ package sys
 
 import (
 	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/yahahaff/rapide/internal/controllers"
 	"github.com/yahahaff/rapide/internal/requests/sys"
 	"github.com/yahahaff/rapide/internal/requests/validators"
-	"github.com/yahahaff/rapide/internal/response"
 	"github.com/yahahaff/rapide/internal/service"
 	"github.com/yahahaff/rapide/pkg/jwt"
 	"github.com/yahahaff/rapide/pkg/logger"
+	"github.com/yahahaff/rapide/pkg/response"
 )
 
 type UsersController struct {
@@ -21,7 +22,7 @@ func (ctrl *UsersController) RefreshToken(c *gin.Context) {
 	token, err := jwt.NewJWT().RefreshToken(c)
 
 	if err != nil {
-		response.Error(c, response.WithMessage("令牌刷新失败"))
+		response.Abort400(c, "令牌刷新失败")
 	} else {
 		data := gin.H{"token": token}
 		response.OK(c, data)
@@ -31,15 +32,12 @@ func (ctrl *UsersController) RefreshToken(c *gin.Context) {
 func (ctrl *UsersController) GetUserInfo(c *gin.Context) {
 	userModel := service.Entrance.SysService.AuthService.CurrentUser(c)
 	// 转换角色为字符串数组
-	roles := make([]string, len(userModel.Roles))
-	for i, role := range userModel.Roles {
-		roles[i] = role.RoleName
-	}
+
 	data := gin.H{
 		"id":       userModel.ID,
 		"realName": userModel.RealName,
-		"roles":    roles,
-		"username": userModel.Username,
+		"roles":    1,
+		"userName": userModel.UserName,
 	}
 	response.OK(c, data)
 }

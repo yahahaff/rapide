@@ -1,62 +1,15 @@
 package sys
 
-import (
-	"github.com/yahahaff/rapide/internal/models/sys"
-	"github.com/yahahaff/rapide/pkg/database"
-)
-
+// MenuService 菜单服务
 type MenuService struct{}
 
-// GetRoleIDByUserID 根据用户ID查询角色ID列表
-func (s *MenuService) GetRoleIDByUserID(userID string) ([]uint64, error) {
-	var user sys.User
-	err := database.DB.Preload("Roles").Where("id = ?", userID).First(&user).Error
-	if err != nil {
-		return nil, err
-	}
-
-	var roleIDs []uint64
-	for _, role := range user.Roles {
-		roleIDs = append(roleIDs, role.ID)
-	}
-
-	return roleIDs, nil
+// NewMenuService 创建菜单服务实例
+func NewMenuService() *MenuService {
+	return &MenuService{}
 }
 
-func (s *MenuService) GetMenuTreeByRoleID(roleID uint64) ([]*sys.Menu, error) {
-	var role sys.Role
-	err := database.DB.Preload("Menus.Children").First(&role, roleID).Error
-	if err != nil {
-		return nil, err
-	}
-	// 构建菜单树
-	menuTree := buildMenuTree(role.Menus, nil)
-	return menuTree, nil
-}
+// GetUserMenus 根据角色ID获取用户菜单树
+func (s *MenuService) GetUserMenus(roleIDs []uint64) (any, error) {
 
-// buildMenuTree 构建菜单树
-func buildMenuTree(menus []sys.Menu, parentID *uint64) []*sys.Menu {
-	var menuTree []*sys.Menu
-	for _, menu := range menus {
-		// 处理根菜单的情况（ParentID 为 nil）
-		if parentID == nil {
-			if menu.ParentID == nil {
-				// 创建 menu 的副本
-				menuCopy := menu
-				children := buildMenuTree(menus, &menu.ID)
-				menuCopy.Children = children
-				menuTree = append(menuTree, &menuCopy)
-			}
-		} else {
-			// 处理子菜单的情况
-			if menu.ParentID != nil && *menu.ParentID == *parentID {
-				// 创建 menu 的副本
-				menuCopy := menu
-				children := buildMenuTree(menus, &menu.ID)
-				menuCopy.Children = children
-				menuTree = append(menuTree, &menuCopy)
-			}
-		}
-	}
-	return menuTree
+	return 1, nil
 }

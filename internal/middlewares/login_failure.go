@@ -6,12 +6,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/yahahaff/rapide/internal/response"
-	"github.com/yahahaff/rapide/pkg/redis"
 	"io"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/yahahaff/rapide/pkg/redis"
+	"github.com/yahahaff/rapide/pkg/response"
 )
 
 func LoginFailureAdd(loginId string) {
@@ -42,7 +43,7 @@ func LoginFailureCheck() gin.HandlerFunc {
 		// 密码输错两次后强制使用验证码
 		intNum, _ := strconv.Atoi(count)
 		if intNum >= 2 && m["captcha_id"] == "" {
-			response.Error(c, response.WithCode(1401), response.WithMessage("Verification code is required"))
+			response.Error(c, 1401, response.WithMessage("Verification code is required"))
 			return
 		}
 		c.Request.Body = io.NopCloser(bytes.NewBuffer(data)) // 复写Body,不然c.Next后面的流程 获取不到参数 关键点

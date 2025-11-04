@@ -4,16 +4,17 @@ package cmd
 import (
 	"context"
 	"errors"
-	"github.com/gin-gonic/gin"
-	"github.com/yahahaff/rapide/initialize"
-	"github.com/yahahaff/rapide/pkg/config"
-	"github.com/yahahaff/rapide/pkg/console"
-	"github.com/yahahaff/rapide/pkg/logger"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/yahahaff/rapide/initialize"
+	"github.com/yahahaff/rapide/pkg/config"
+	"github.com/yahahaff/rapide/pkg/console"
+	"github.com/yahahaff/rapide/pkg/logger"
 )
 
 func Execute() {
@@ -38,9 +39,6 @@ func Execute() {
 
 	// 初始化Validator
 	initialize.SetupValidators()
-
-	// 初始化Cloudflare R2
-	initialize.SetupR2()
 
 	// 创建 HTTP 服务器
 	srv := &http.Server{
