@@ -1,8 +1,6 @@
 package sys
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/yahahaff/rapide/internal/controllers"
 	"github.com/yahahaff/rapide/internal/service"
@@ -23,6 +21,5 @@ func (mc *MenuController) GetUserMenus(c *gin.Context) {
 		response.Abort500(c, "获取用户菜单失败")
 		return
 	}
-	fmt.Println(menus)
 	response.OK(c, menus)
 }
