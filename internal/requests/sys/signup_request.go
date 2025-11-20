@@ -8,7 +8,7 @@ type SignupRequest struct {
 	Password        string   `json:"password" validate:"required,max=255"`
 	PasswordConfirm string   `json:"password_confirm" validate:"required,max=255"`
 	VerifyCode      string   `json:"verify_code" validate:"omitempty,max=6"`
-	RoleIDs         []uint64 `json:"role_ids" validate:"required"`
+	RoleIDs         []uint64 `json:"role_ids" validate:"omitempty"`
 	RealName        string   `json:"real_name" validate:"omitempty,max=50"`
 	Avatar          string   `json:"avatar" validate:"omitempty,url"`
 }

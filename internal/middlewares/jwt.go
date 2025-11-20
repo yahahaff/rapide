@@ -24,25 +24,32 @@ func AuthJWT() gin.HandlerFunc {
 		}
 
 		// 将 claims.UserID 从字符串转换为整数
-		userID, err := strconv.Atoi(claims.UserID)
+		userID, err := strconv.ParseInt(claims.UserID, 10, 64)
+		if err != nil {
+			// 处理错误，比如无效数字
+			return
+		}
 		if err != nil {
 			logger.DebugString("jwt", "claims", fmt.Sprintf("%v", err.Error()))
 			response.Abort401(c, "无效的用户ID")
 			return
 		}
-
 		// JWT 解析成功，设置用户信息
 		userModel := sys.GetById(userID)
 		if userModel.ID == 0 {
 			response.Abort401(c, "找不到对应用户，用户可能已删除")
 			return
 		}
-
+		roleModel := sys.GetRoleById(userID)
+		if roleModel.ID == 0 {
+			response.Abort401(c, "角色不存在")
+			return
+		}
 		// 将用户信息存入 gin.context 里，后续 auth 包将从这里拿到当前用户数据
-		c.Set("current_user_id", userModel.GetStringID())
+		c.Set("current_user_id", userModel.ID)
 		c.Set("current_user_name", userModel.UserName)
 		c.Set("current_user", userModel)
-		c.Set("current_user_role_id", 1)
+		c.Set("current_user_role_id", roleModel.ID)
 		c.Next()
 	}
 }

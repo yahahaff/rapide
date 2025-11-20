@@ -26,8 +26,8 @@ func GetByPhone(phone string) (userModel sys.User) {
 }
 
 // GetById 通过 用户ID 获取用户Model
-func GetById(userID int) (userModel sys.User) {
-	database.DB.Preload("Roles").First(&userModel, userID)
+func GetById(userID int64) (userModel sys.User) {
+	database.DB.First(&userModel, userID)
 	return
 }
 

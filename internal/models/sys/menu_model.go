@@ -53,29 +53,3 @@ type RoleMenu struct {
 func (RoleMenu) TableName() string {
 	return "sys_role_menu"
 }
-
-// FrontendMenu ---------------DTO ----------------
-// FrontendMenu 前端需要的菜单格式
-type FrontendMenu struct {
-	Name      string          `json:"name"`
-	Path      string          `json:"path"`
-	Component string          `json:"component,omitempty"`
-	Redirect  string          `json:"redirect,omitempty"`
-	Meta      *FrontendMeta   `json:"meta,omitempty"`
-	Children  []*FrontendMenu `json:"children,omitempty"`
-}
-
-// FrontendMeta 前端需要的 meta 格式
-type FrontendMeta struct {
-	Order              int    `json:"order,omitempty"`
-	Title              string `json:"title,omitempty"`
-	Icon               string `json:"icon,omitempty"`
-	AffixTab           bool   `json:"affixTab,omitempty"`
-	KeepAlive          bool   `json:"keepAlive,omitempty"`
-	Hidden             bool   `json:"hidden,omitempty"`
-	NoBasicLayout      bool   `json:"noBasicLayout,omitempty"`
-	IgnoreKeepAlive    bool   `json:"ignoreKeepAlive,omitempty"`
-	HideBreadcrumb     bool   `json:"hideBreadcrumb,omitempty"`
-	HideChildrenInMenu bool   `json:"hideChildrenInMenu,omitempty"`
-	CurrentActiveMenu  string `json:"currentActiveMenu,omitempty"`
-}

@@ -16,6 +16,12 @@ func GetRolesWithChildren() (roles []sys.Role) {
 	return
 }
 
+// GetRoleById 通过 用户ID 获取用户角色Model
+func GetRoleById(roleID int64) (roleModel sys.Role) {
+	database.DB.First(&roleModel, roleID)
+	return
+}
+
 func RoleDeletelById(id int) {
 	database.DB.Where("id=?", id).Delete(&sys.Role{})
 
