@@ -95,7 +95,10 @@ func convertMenuToVben(menu *sys.Menu) map[string]interface{} {
 	if menu.Title != "" {
 		meta["title"] = menu.Title
 	}
-
+	// Icon 图标（不为空就返回）
+	if menu.Icon != "" {
+		meta["icon"] = menu.Icon
+	}
 	// Order（排序）
 	if menu.OrderNo != 0 {
 		meta["order"] = menu.OrderNo
