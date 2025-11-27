@@ -26,19 +26,77 @@ func (us *UserService) GetUserRoleID(userID uint64) (uint64, error) {
 
 // GetUserList 获取用户列表
 func (us *UserService) GetUserList(page int, size int, sort, order string) (data interface{}, pager paginator.Paging, err error) {
-
-	db := database.DB.Preload("Dept").Preload("Role")
-
-	if sort != "" && order != "" {
-		db = db.Order(fmt.Sprintf("%s %s", sort, order))
+	// 参数验证和默认值处理
+	if page < 1 {
+		page = 1
+	}
+	if size < 1 || size > 100 {
+		size = 20 // 默认每页20条，最大100条
 	}
 
-	var users []sys.User
-	db.Find(&users)
+	// 排序参数验证
+	if sort != "" {
+		// 只允许特定字段排序，防止SQL注入
+		allowedSorts := map[string]bool{
+			"id":         true,
+			"user_name":  true,
+			"created_at": true,
+			"updated_at": true,
+		}
+		if !allowedSorts[sort] {
+			sort = "id" // 默认按ID排序
+		}
 
-	// 分页数据
-	data, pager = paginator.Paginate(users, page, size)
-	return
+		// 排序方向验证
+		if order != "asc" && order != "desc" {
+			order = "asc" // 默认升序
+		}
+	} else {
+		sort = "id"
+		order = "asc"
+	}
+
+	// 构建查询
+	db := database.DB.Model(&sys.User{})
+
+	// 添加排序
+	db = db.Order(fmt.Sprintf("%s %s", sort, order))
+
+	// 获取总记录数
+	var totalCount int64
+	if err := db.Count(&totalCount).Error; err != nil {
+		return nil, paginator.Paging{}, err
+	}
+
+	// 计算总页数
+	totalPages := int(totalCount) / size
+	if int(totalCount)%size != 0 {
+		totalPages++
+	}
+
+	// 限制当前页不超过总页数
+	if page > totalPages && totalPages > 0 {
+		page = totalPages
+	}
+
+	// 计算偏移量
+	offset := (page - 1) * size
+
+	// 执行分页查询
+	var users []sys.User
+	if err := db.Limit(size).Offset(offset).Find(&users).Error; err != nil {
+		return nil, paginator.Paging{}, err
+	}
+
+	// 设置分页信息
+	pager = paginator.Paging{
+		CurrentPage: page,
+		PerPage:     size,
+		TotalCount:  totalCount,
+		TotalPage:   totalPages,
+	}
+
+	return users, pager, nil
 }
 
 // ResetByEmail 重置密码

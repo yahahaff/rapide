@@ -18,7 +18,7 @@ func UserRouter(Router *gin.RouterGroup) {
 		// 获取当前用户
 		usersGroup.GET("/info", uc.GetUserInfo)
 		// 获取所有用户
-		usersGroup.GET("/getUserList", uc.GetUserList)
+		usersGroup.GET("/list", uc.GetUserList)
 	}
 
 }

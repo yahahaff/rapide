@@ -11,6 +11,7 @@ func MenuRouter(Router *gin.RouterGroup) {
 		menuGroup := Router.Group("menu")
 		mc := new(sys.MenuController)
 		menuGroup.GET("/all", mc.GetUserMenus)
+		menuGroup.GET("/list", mc.GetMenuList)
 
 	}
 }

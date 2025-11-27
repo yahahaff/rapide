@@ -47,7 +47,23 @@ func (ctrl *UsersController) GetUserList(c *gin.Context) {
 	if ok := validators.Validate(c, &request); !ok {
 		return
 	}
-	data, pager, err := service.Entrance.SysService.UserService.GetUserList(request.Page, request.PerPage, request.Sort, request.Order)
+
+	// 处理分页参数，优先使用page_size，如果没有则使用per_page
+	pageSize := request.PageSize
+	if pageSize == 0 {
+		pageSize = request.PerPage
+	}
+	if pageSize == 0 {
+		pageSize = 20 // 设置默认值
+	}
+
+	// 处理页码参数，确保页码大于0
+	page := request.Page
+	if page <= 0 {
+		page = 1
+	}
+
+	data, pager, err := service.Entrance.SysService.UserService.GetUserList(page, pageSize, request.Sort, request.Order)
 	// 如果错误存在，记录错误日志，并抛出异常
 	if err != nil {
 		logger.ErrorString("user", "error", fmt.Sprintf(err.Error()))

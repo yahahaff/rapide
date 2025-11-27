@@ -15,9 +15,29 @@ type RoleController struct {
 }
 
 func (rc *RoleController) GetRole(c *gin.Context) {
-	data := sysDao.GetRolesWithChildren()
-	response.OK(c, data)
+	// 1. 验证表单
+	request := sysReq.PaginationRequest{}
+	if ok := validators.Validate(c, &request); !ok {
+		return
+	}
 
+	// 处理分页参数
+	pageSize := request.PageSize
+	if pageSize == 0 {
+		pageSize = request.PerPage
+	}
+	if pageSize == 0 {
+		pageSize = 20
+	}
+
+	// 处理页码参数
+	page := request.Page
+	if page <= 0 {
+		page = 1
+	}
+
+	data := sysDao.GetRolesWithChildren(pageSize)
+	response.OK(c, data)
 }
 
 func (rc *RoleController) AddRole(c *gin.Context) {

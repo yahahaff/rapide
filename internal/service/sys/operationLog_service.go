@@ -11,15 +11,77 @@ type OperationLogService struct{}
 
 // GetOperationLog 分页获取操作记录
 func (*OperationLogService) GetOperationLog(page int, size int, sort, order string) (data interface{}, pager paginator.Paging, err error) {
-	var operationLog []sys.OperationLog
-	db := database.DB.Order("id DESC")
-
-	if sort != "" && order != "" {
-		db = db.Order(fmt.Sprintf("%s %s", sort, order))
+	// 参数验证和默认值处理
+	if page < 1 {
+		page = 1
 	}
-	db.Find(&operationLog)
+	if size < 1 || size > 100 {
+		size = 20 // 默认每页20条，最大100条
+	}
+	
+	// 排序参数验证
+	if sort != "" {
+		// 只允许特定字段排序，防止SQL注入
+		allowedSorts := map[string]bool{
+			"id":        true,
+			"user_id":   true,
+			"method":    true,
+			"path":      true,
+			"ip":        true,
+			"created_at": true,
+		}
+		if !allowedSorts[sort] {
+			sort = "id" // 默认按ID排序
+		}
+		
+		// 排序方向验证
+		if order != "asc" && order != "desc" {
+			order = "desc" // 默认降序
+		}
+	} else {
+		sort = "id"
+		order = "desc"
+	}
 
-	// 分页数据
-	data, pager = paginator.Paginate(operationLog, page, size)
-	return
+	// 构建查询
+	db := database.DB.Model(&sys.OperationLog{})
+
+	// 添加排序
+	db = db.Order(fmt.Sprintf("%s %s", sort, order))
+
+	// 获取总记录数
+	var totalCount int64
+	if err := db.Count(&totalCount).Error; err != nil {
+		return nil, paginator.Paging{}, err
+	}
+
+	// 计算总页数
+	totalPages := int(totalCount) / size
+	if int(totalCount)%size != 0 {
+		totalPages++
+	}
+
+	// 限制当前页不超过总页数
+	if page > totalPages && totalPages > 0 {
+		page = totalPages
+	}
+
+	// 计算偏移量
+	offset := (page - 1) * size
+
+	// 执行分页查询
+	var operationLog []sys.OperationLog
+	if err := db.Limit(size).Offset(offset).Find(&operationLog).Error; err != nil {
+		return nil, paginator.Paging{}, err
+	}
+
+	// 设置分页信息
+	pager = paginator.Paging{
+		CurrentPage: page,
+		PerPage:     size,
+		TotalCount:  totalCount,
+		TotalPage:   totalPages,
+	}
+
+	return operationLog, pager, nil
 }
