@@ -2,13 +2,14 @@ package middlewares
 
 import (
 	"bytes"
+	"io"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/yahahaff/rapide/internal/models/sys"
 	"github.com/yahahaff/rapide/pkg/database"
 	"github.com/yahahaff/rapide/pkg/logger"
 	"go.uber.org/zap"
-	"io"
-	"time"
 )
 
 func RecordOperation() gin.HandlerFunc {
@@ -34,14 +35,13 @@ func RecordOperation() gin.HandlerFunc {
 		c.Writer = w
 		start := time.Now()
 
-		notRecordMethods := map[string]bool{
-			"GET": false,
+		// 排除不需要记录的请求方法，只排除OPTIONS（CORS预检）
+		excludeMethods := map[string]bool{
+			"OPTIONS": true,
 		}
 
-		specificURL := "/api/cloudflare/r2/file/upload"
-
-		// 判断那些请求方法不被记录
-		if notRecordMethods[c.Request.Method] && c.Request.URL.Path == specificURL {
+		// 记录所有非排除方法的请求
+		if !excludeMethods[c.Request.Method] {
 			defer func() {
 				requests := string(requestBody)
 				end := time.Now()
