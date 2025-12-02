@@ -16,28 +16,29 @@ type OperationLogController struct {
 // GetOperationLog 分页获取操作记录
 // @Summary 获取操作记录
 // @Security Bearer
-// @Schemes sys.PaginationRequest{}
+// @Schemes sys.OperationLogRequest{}
 // @Param sort query string false "sort"
 // @Param order query string false "order"
-// @Param per_page query int false "per_page"
 // @Param page query int false "page"
+// @Param client_ip query string false "client_ip"
+// @Param method query string false "method"
+// @Param path query string false "path"
+// @Param status query int false "status"
+// @Param page_size query int false "page_size"
 // @Description
 // @Tags 系统管理
 // @Accept json
 // @Produce json
 // @Success 200 {object} response.Response
-// @Router /api/sys/record/getOperationLog [get]
+// @Router /api/record/getOperationLog [get]
 func (*OperationLogController) GetOperationLog(c *gin.Context) {
-	request := sys.PaginationRequest{}
+	request := sys.OperationLogRequest{}
 	if ok := validators.Validate(c, &request); !ok {
 		return
 	}
 
-	// 处理分页参数，优先使用page_size，如果没有则使用per_page
+	// 处理分页参数，设置默认值
 	pageSize := request.PageSize
-	if pageSize == 0 {
-		pageSize = request.PerPage
-	}
 	if pageSize == 0 {
 		pageSize = 20 // 设置默认值
 	}
@@ -48,7 +49,7 @@ func (*OperationLogController) GetOperationLog(c *gin.Context) {
 		page = 1
 	}
 
-	data, pager, err := service.Entrance.SysService.OperationLogService.GetOperationLog(page, pageSize, request.Sort, request.Order)
+	data, pager, err := service.Entrance.SysService.OperationLogService.GetOperationLog(page, pageSize, request.Sort, request.Order, request.ClientIP, request.Method, request.Path, request.Status)
 	// 如果错误存在，记录错误日志，并抛出异常
 	if err != nil {
 		response.Abort500(c, "获取操作列表失败")
@@ -56,8 +57,10 @@ func (*OperationLogController) GetOperationLog(c *gin.Context) {
 	}
 
 	result := gin.H{
-		"datalist": data,
-		"pager":    pager,
+		"page":     page,
+		"pageSize": pageSize,
+		"result":   data,
+		"total":    pager.TotalCount,
 	}
 	response.OK(c, result)
 }

@@ -10,7 +10,7 @@ import (
 type OperationLogService struct{}
 
 // GetOperationLog 分页获取操作记录
-func (*OperationLogService) GetOperationLog(page int, size int, sort, order string) (data interface{}, pager paginator.Paging, err error) {
+func (*OperationLogService) GetOperationLog(page int, size int, sort, order string, clientIP, method, path string, status int) (data interface{}, pager paginator.Paging, err error) {
 	// 参数验证和默认值处理
 	if page < 1 {
 		page = 1
@@ -24,10 +24,10 @@ func (*OperationLogService) GetOperationLog(page int, size int, sort, order stri
 		// 只允许特定字段排序，防止SQL注入
 		allowedSorts := map[string]bool{
 			"id":        true,
-			"user_id":   true,
+			"client_ip": true,
 			"method":    true,
 			"path":      true,
-			"ip":        true,
+			"status":    true,
 			"created_at": true,
 		}
 		if !allowedSorts[sort] {
@@ -45,6 +45,20 @@ func (*OperationLogService) GetOperationLog(page int, size int, sort, order stri
 
 	// 构建查询
 	db := database.DB.Model(&sys.OperationLog{})
+
+	// 应用查询条件
+	if clientIP != "" {
+		db = db.Where("client_ip LIKE ?", "%"+clientIP+"%")
+	}
+	if method != "" {
+		db = db.Where("method = ?", method)
+	}
+	if path != "" {
+		db = db.Where("path LIKE ?", "%"+path+"%")
+	}
+	if status > 0 {
+		db = db.Where("status = ?", status)
+	}
 
 	// 添加排序
 	db = db.Order(fmt.Sprintf("%s %s", sort, order))

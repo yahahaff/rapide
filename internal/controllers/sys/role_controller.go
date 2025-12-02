@@ -21,13 +21,10 @@ func (rc *RoleController) GetRole(c *gin.Context) {
 		return
 	}
 
-	// 处理分页参数
+	// 处理分页参数，设置默认值
 	pageSize := request.PageSize
 	if pageSize == 0 {
-		pageSize = request.PerPage
-	}
-	if pageSize == 0 {
-		pageSize = 10
+		pageSize = 10 // 设置默认值
 	}
 
 	// 处理页码参数
