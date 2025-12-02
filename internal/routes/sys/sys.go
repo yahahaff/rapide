@@ -29,4 +29,5 @@ func RouterGroup(router *gin.Engine) {
 	CasbinRouter(sys)
 	UserRouter(sys)
 	OperationLogRouter(sys)
+	SSLCertRouter(sys)
 }

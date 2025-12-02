@@ -27,7 +27,7 @@ func (rc *RoleController) GetRole(c *gin.Context) {
 		pageSize = request.PerPage
 	}
 	if pageSize == 0 {
-		pageSize = 20
+		pageSize = 10
 	}
 
 	// 处理页码参数
@@ -36,8 +36,18 @@ func (rc *RoleController) GetRole(c *gin.Context) {
 		page = 1
 	}
 
-	data := sysDao.GetRolesWithChildren(pageSize)
-	response.OK(c, data)
+	// 获取角色列表和总数
+	roles, total := sysDao.GetRoles(page, pageSize)
+
+	// 构造返回数据
+	responseData := map[string]interface{}{
+		"result":   roles,
+		"total":    total,
+		"page":     page,
+		"pageSize": pageSize,
+	}
+
+	response.OK(c, responseData)
 }
 
 func (rc *RoleController) AddRole(c *gin.Context) {

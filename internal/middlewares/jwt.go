@@ -35,21 +35,19 @@ func AuthJWT() gin.HandlerFunc {
 			return
 		}
 		// JWT 解析成功，设置用户信息
-		userModel := sys.GetById(userID)
-		if userModel.ID == 0 {
-			response.Abort401(c, "找不到对应用户，用户可能已删除")
-			return
-		}
-		roleModel := sys.GetRoleById(userID)
-		if roleModel.ID == 0 {
-			response.Abort401(c, "角色不存在")
-			return
-		}
-		// 将用户信息存入 gin.context 里，后续 auth 包将从这里拿到当前用户数据
-		c.Set("current_user_id", userModel.ID)
-		c.Set("current_user_name", userModel.UserName)
-		c.Set("current_user", userModel)
+	userModel := sys.GetById(userID)
+	if userModel.ID == 0 {
+		response.Abort401(c, "找不到对应用户，用户可能已删除")
+		return
+	}
+	roleModel := sys.GetRoleById(userID)
+	// 将用户信息存入 gin.context 里，后续 auth 包将从这里拿到当前用户数据
+	c.Set("current_user_id", userModel.ID)
+	c.Set("current_user_name", userModel.UserName)
+	c.Set("current_user", userModel)
+	if roleModel.ID != 0 {
 		c.Set("current_user_role_id", roleModel.ID)
-		c.Next()
+	}
+	c.Next()
 	}
 }
