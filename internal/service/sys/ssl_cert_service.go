@@ -43,9 +43,21 @@ func (ss *SSLCertService) GetSSLCertList(page int, size int) (data interface{}, 
 		return nil, 0, err
 	}
 
-	// 执行分页查询
-	var certList []sys.SSLCert
-	if err := db.Order("id desc").Limit(size).Offset(offset).Find(&certList).Error; err != nil {
+	// 定义返回字段结构体
+	type SSLCertListResponse struct {
+		Domain       string    `json:"domain"`
+		CommonName   string    `json:"commonName"`
+		Organization string    `json:"organization"`
+		Email        string    `json:"email"`
+		Type         string    `json:"type"`
+		ValidityEnd  time.Time `json:"validityEnd"`
+		Provider     string    `json:"provider"`
+		ApplyStatus  string    `json:"applyStatus"`
+	}
+
+	// 执行分页查询，只查询指定字段
+	var certList []SSLCertListResponse
+	if err := db.Select("domain, common_name, organization, email, type, validity_end, provider, apply_status").Order("id desc").Limit(size).Offset(offset).Find(&certList).Error; err != nil {
 		return nil, 0, err
 	}
 

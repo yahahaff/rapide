@@ -14,14 +14,12 @@ type SSLCert struct {
 	CommonName       string    `json:"commonName" gorm:"type:varchar(255);not null;comment:'通用名称'"`
 	Organization     string    `json:"organization" gorm:"type:varchar(255);comment:'组织'"`
 	OrganizationUnit string    `json:"organizationUnit" gorm:"type:varchar(255);comment:'组织单位'"`
-	Country          string    `json:"country" gorm:"type:varchar(2);comment:'国家'"`
 	State            string    `json:"state" gorm:"type:varchar(255);comment:'州/省'"`
 	City             string    `json:"city" gorm:"type:varchar(255);comment:'城市'"`
 	Email            string    `json:"email" gorm:"type:varchar(255);comment:'邮箱'"`
 	Type             string    `json:"type" gorm:"type:varchar(10);comment:'证书类型: DV/OV/EV'"`
 	ValidityStart    time.Time `json:"validityStart" gorm:"type:datetime;comment:'有效期开始时间'"`
 	ValidityEnd      time.Time `json:"validityEnd" gorm:"type:datetime;comment:'有效期结束时间'"`
-	Status           int       `json:"status" gorm:"default:1;comment:'状态 0:禁用 1:启用'"`
 	// 证书提供商相关字段
 	Provider      string `json:"provider" gorm:"type:varchar(50);not null;default:'letsencrypt';comment:'证书提供商: letsencrypt/google'"`
 	ChallengeType string `json:"challengeType" gorm:"type:varchar(20);not null;default:'http-01';comment:'验证方式: http-01/dns-01'"`
