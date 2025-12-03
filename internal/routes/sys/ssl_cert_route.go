@@ -13,5 +13,7 @@ func SSLCertRouter(Router *gin.RouterGroup) {
 		sslCertController := new(sys.SSLCertController)
 		// 获取SSL证书列表
 		sslCertGroup.GET("/list", sslCertController.GetSSLCertList)
+		// 创建SSL证书
+		sslCertGroup.POST("/create", sslCertController.CreateSSLCert)
 	}
 }
