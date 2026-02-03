@@ -1,0 +1,30 @@
+language: go
+go:
+  - 1.19.0  # 版本号, 支持多种版本号
+
+sudo: required #  #有定制化开发环境需要，默认false，不开启容器，编译效率高
+
+os:            # 使用的操作系统
+  - linux
+  - osx
+
+notifications:  # 邮箱通知
+  email: yahahaff@qq.com
+
+go_import_path: # 使用Go需要导入的包.
+  - github.com/gin-gonic/gin
+  - github.com/pkg/errors
+  - github.com/smartystreets/goconvey
+
+before_install: # 主要安装一些系统依赖,
+  - go mod tidy
+
+install: true # 安装, true跳过
+
+script: # 脚本执行.
+  - echo "run"
+  - go test -race -coverprofile=coverage.txt -covermode=atomic
+  - go test -v ./...
+
+after_success: # 上传测试报告
+  - bash <(curl -s https://codecov.io/bash)
