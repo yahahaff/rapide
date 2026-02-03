@@ -49,7 +49,7 @@ func (*OperationLogController) GetOperationLog(c *gin.Context) {
 		page = 1
 	}
 
-	data, pager, err := service.Entrance.SysService.OperationLogService.GetOperationLog(page, pageSize, request.Sort, request.Order, request.ClientIP, request.Method, request.Path, request.Status, request.StartTime, request.EndTime)
+	data, pager, err := service.Entrance.SysService.OperationLogService.GetOperationLog(page, pageSize, request.Sort, request.Order, request.ClientIP, request.Method, request.Path, request.Status, request.Operator, request.StartTime, request.EndTime)
 	// 如果错误存在，记录错误日志，并抛出异常
 	if err != nil {
 		response.Abort500(c, "获取操作列表失败")

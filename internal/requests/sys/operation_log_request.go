@@ -6,6 +6,7 @@ type OperationLogRequest struct {
 	Method    string `form:"method" json:"method" binding:"omitempty"`
 	Path      string `form:"path" json:"path" binding:"omitempty"`
 	Status    int    `form:"status" json:"status" binding:"omitempty"`
+	Operator  string `form:"operator" json:"operator" binding:"omitempty"`
 	StartTime string `form:"startTime" json:"startTime" binding:"omitempty"`
 	EndTime   string `form:"endTime" json:"endTime" binding:"omitempty"`
 }

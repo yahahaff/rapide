@@ -10,7 +10,7 @@ import (
 type OperationLogService struct{}
 
 // GetOperationLog 分页获取操作记录
-func (*OperationLogService) GetOperationLog(page int, size int, sort, order string, clientIP, method, path string, status int, startTime, endTime string) (data interface{}, pager paginator.Paging, err error) {
+func (*OperationLogService) GetOperationLog(page int, size int, sort, order string, clientIP, method, path string, status int, operator, startTime, endTime string) (data interface{}, pager paginator.Paging, err error) {
 	// 参数验证和默认值处理
 	if page < 1 {
 		page = 1
@@ -18,22 +18,23 @@ func (*OperationLogService) GetOperationLog(page int, size int, sort, order stri
 	if size < 1 || size > 100 {
 		size = 20 // 默认每页20条，最大100条
 	}
-	
+
 	// 排序参数验证
 	if sort != "" {
 		// 只允许特定字段排序，防止SQL注入
 		allowedSorts := map[string]bool{
-			"id":        true,
-			"client_ip": true,
-			"method":    true,
-			"path":      true,
-			"status":    true,
+			"id":         true,
+			"client_ip":  true,
+			"method":     true,
+			"path":       true,
+			"status":     true,
+			"operator":   true,
 			"created_at": true,
 		}
 		if !allowedSorts[sort] {
 			sort = "created_at" // 默认按创建时间排序
 		}
-		
+
 		// 排序方向验证
 		if order != "asc" && order != "desc" {
 			order = "desc" // 默认降序
@@ -58,6 +59,9 @@ func (*OperationLogService) GetOperationLog(page int, size int, sort, order stri
 	}
 	if status > 0 {
 		db = db.Where("status = ?", status)
+	}
+	if operator != "" {
+		db = db.Where("operator LIKE ?", "%"+operator+"%")
 	}
 	if startTime != "" {
 		db = db.Where("created_at >= ?", startTime)

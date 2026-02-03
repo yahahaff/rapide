@@ -13,6 +13,7 @@ type OperationLog struct {
 	Latency  int64  `json:"latency" gorm:"not null; comment:'耗时 单位： 毫秒'"`
 	Requests string `json:"requests" gorm:"type:text; comment:'请求体'"`
 	Response string `json:"response" gorm:"type:text; comment:'响应体'"`
+	Operator string `json:"operator" gorm:"comment:'操作人'"`
 	models.CommonTimestampsField
 }
 

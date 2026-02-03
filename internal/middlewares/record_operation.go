@@ -5,10 +5,11 @@ import (
 	"io"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"rapide/internal/models/sys"
 	"rapide/pkg/database"
 	"rapide/pkg/logger"
+
+	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
 
@@ -53,6 +54,16 @@ func RecordOperation() gin.HandlerFunc {
 				clientIP := c.ClientIP()
 				response := w.body.String()
 
+				// 获取操作人信息
+				operator := ""
+				if _, exists := c.Get("current_user_id"); exists {
+					if user, exists := c.Get("current_user"); exists {
+						if userModel, ok := user.(*sys.User); ok {
+							operator = userModel.UserName
+						}
+					}
+				}
+
 				OperationLog := &sys.OperationLog{
 					ClientIP: clientIP,
 					Status:   statusCode,
@@ -61,6 +72,7 @@ func RecordOperation() gin.HandlerFunc {
 					Latency:  latency.Milliseconds(),
 					Requests: requests,
 					Response: response,
+					Operator: operator,
 				}
 				select {
 				case recordChan <- OperationLog:
