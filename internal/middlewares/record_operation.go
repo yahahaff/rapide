@@ -39,7 +39,7 @@ func RecordOperation() gin.HandlerFunc {
 		// 排除不需要记录的请求方法，排除OPTIONS（CORS预检）和GET请求
 		excludeMethods := map[string]bool{
 			"OPTIONS": true,
-			"GET":     true,
+			"GET":     false,
 		}
 
 		// 记录所有非排除方法的请求
@@ -55,15 +55,7 @@ func RecordOperation() gin.HandlerFunc {
 				response := w.body.String()
 
 				// 获取操作人信息
-				operator := ""
-				if _, exists := c.Get("current_user_id"); exists {
-					if user, exists := c.Get("current_user"); exists {
-						if userModel, ok := user.(*sys.User); ok {
-							operator = userModel.UserName
-						}
-					}
-				}
-
+				operator := c.GetString("current_user_name")
 				OperationLog := &sys.OperationLog{
 					ClientIP: clientIP,
 					Status:   statusCode,
