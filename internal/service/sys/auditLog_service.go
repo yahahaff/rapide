@@ -45,7 +45,7 @@ func (*OperationLogService) GetOperationLog(page int, size int, sort, order stri
 	}
 
 	// 构建查询
-	db := database.DB.Model(&sys.OperationLog{})
+	db := database.DB.Model(&sys.AuditLog{})
 
 	// 应用查询条件
 	if clientIP != "" {
@@ -94,8 +94,8 @@ func (*OperationLogService) GetOperationLog(page int, size int, sort, order stri
 	offset := (page - 1) * size
 
 	// 执行分页查询
-	var operationLog []sys.OperationLog
-	if err := db.Limit(size).Offset(offset).Find(&operationLog).Error; err != nil {
+	var auditLog []sys.AuditLog
+	if err := db.Limit(size).Offset(offset).Find(&auditLog).Error; err != nil {
 		return nil, paginator.Paging{}, err
 	}
 
@@ -107,5 +107,5 @@ func (*OperationLogService) GetOperationLog(page int, size int, sort, order stri
 		TotalPage:   totalPages,
 	}
 
-	return operationLog, pager, nil
+	return auditLog, pager, nil
 }

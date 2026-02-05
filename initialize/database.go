@@ -59,7 +59,7 @@ func SetupDB() {
 	if app.IsLocal() {
 		// First migrate tables without foreign key constraints
 		err := database.DB.AutoMigrate(&sys.Role{},
-			&sys.OperationLog{}, &sys.Menu{},
+			&sys.AuditLog{}, &sys.Menu{},
 			&sys.UserRole{}, &sys.RoleMenu{},
 			&sys.UserDept{}, &sys.Dept{},
 			&sys.User{}, &ssl.SSLCert{},
