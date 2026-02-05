@@ -76,12 +76,6 @@ func Logger() gin.HandlerFunc {
 		if c.Request.Method == "POST" || c.Request.Method == "PUT" || c.Request.Method == "DELETE" {
 			// 请求的内容
 			logFields = append(logFields, zap.String("Request Body", string(requestBody)))
-
-			// 响应的内容 - 跳过二进制响应（如文件下载）
-			contentType := c.Writer.Header().Get("Content-Type")
-			if contentType != "application/zip" && contentType != "application/octet-stream" {
-				logFields = append(logFields, zap.String("Response Body", w.body.String()))
-			}
 		}
 
 		if responStatus > 400 && responStatus <= 499 {

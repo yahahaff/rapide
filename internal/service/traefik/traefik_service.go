@@ -2,6 +2,7 @@ package traefik
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"rapide/pkg/kubernetes"
@@ -79,7 +80,7 @@ func (s *TraefikService) GetCRDByName(name string) (*apiextensionsv1.CustomResou
 func (s *TraefikService) GetCRResources(group, version, kind string, page, pageSize int) ([]unstructured.Unstructured, int, error) {
 	// 检查Kubernetes配置是否已初始化
 	if kubernetes.Config == nil {
-		return nil, 0, nil
+		return nil, 0, fmt.Errorf("kubernetes config is not initialized")
 	}
 
 	// 创建DynamicClient
