@@ -14,7 +14,7 @@ import (
 )
 
 func RecordOperation() gin.HandlerFunc {
-	recordChan := make(chan *sys.OperationLog, 100) // 缓冲区大小可以根据实际情况调整
+	recordChan := make(chan *sys.AuditLog, 100) // 缓冲区大小可以根据实际情况调整
 
 	go func() {
 		for log := range recordChan {
@@ -31,19 +31,10 @@ func RecordOperation() gin.HandlerFunc {
 			c.Request.Body = io.NopCloser(bytes.NewBuffer(requestBody))
 		}
 
-		// 获取 response 内容
-		w := &responseBodyWriter{body: &bytes.Buffer{}, ResponseWriter: c.Writer}
-		c.Writer = w
 		start := time.Now()
 
-		// 排除不需要记录的请求方法，排除OPTIONS（CORS预检）和GET请求
-		excludeMethods := map[string]bool{
-			"OPTIONS": true,
-			"GET":     false,
-		}
-
-		// 记录所有非排除方法的请求
-		if !excludeMethods[c.Request.Method] {
+		// 记录所有请求方法
+		if true {
 			defer func() {
 				requests := string(requestBody)
 				end := time.Now()
@@ -52,22 +43,25 @@ func RecordOperation() gin.HandlerFunc {
 				method := c.Request.Method
 				statusCode := c.Writer.Status()
 				clientIP := c.ClientIP()
-				response := w.body.String()
 
 				// 获取操作人信息
 				operator := c.GetString("current_user_name")
-				OperationLog := &sys.OperationLog{
+				// 记录请求的URL Query参数
+				query := c.Request.URL.RawQuery
+				if query != "" {
+					requests = requests + "\nQuery: " + query
+				}
+				AuditLog := &sys.AuditLog{
 					ClientIP: clientIP,
 					Status:   statusCode,
 					Method:   method,
 					Path:     path,
 					Latency:  latency.Milliseconds(),
 					Requests: requests,
-					Response: response,
 					Operator: operator,
 				}
 				select {
-				case recordChan <- OperationLog:
+				case recordChan <- AuditLog:
 				default:
 					// 如果日志通道已满，则丢弃日志条目
 					logger.Error("middlewares", zap.String("error", "record channel full, dropping log entry"))
