@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"rapide/pkg/config"
+
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"

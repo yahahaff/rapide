@@ -50,7 +50,7 @@ func RegisterAPIRoutes(Router *gin.Engine) {
 
 	// 6. Traefik相关路由 (/api/traefik)
 	traefikGroup := Router.Group("/api/traefik")
-	traefikGroup.Use(middlewares.AuthJWT()) // JWT认证
+	// traefikGroup.Use(middlewares.AuthJWT()) // JWT认证
 	{
 		traefik.TraefikRouter(traefikGroup)
 	}
