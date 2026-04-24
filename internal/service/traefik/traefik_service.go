@@ -72,6 +72,139 @@ func (s *TraefikService) GetHTTPRoutes(page, pageSize int) ([]unstructured.Unstr
 	return httpRouteList.Items[start:end], total, nil
 }
 
+// GetServices 获取traefik命名空间中的Services，支持分页
+func (s *TraefikService) GetServices(page, pageSize int) ([]unstructured.Unstructured, int, error) {
+	// 检查Kubernetes客户端是否已初始化
+	if kubernetes.Config == nil {
+		return nil, 0, nil
+	}
+
+	// 创建dynamic client
+	dynamicClient, err := dynamic.NewForConfig(kubernetes.Config)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// 定义Services的GroupVersionResource
+	serviceGVR := schema.GroupVersionResource{
+		Group:    "",
+		Version:  "v1",
+		Resource: "services",
+	}
+
+	// 获取traefik命名空间中的Services
+	serviceList, err := dynamicClient.Resource(serviceGVR).Namespace("traefik").List(context.Background(), metav1.ListOptions{})
+	if err != nil {
+		return nil, 0, err
+	}
+
+	total := len(serviceList.Items)
+
+	// 处理分页
+	if page <= 0 {
+		page = 1
+	}
+	if pageSize <= 0 {
+		pageSize = 10
+	}
+
+	start := (page - 1) * pageSize
+	end := start + pageSize
+
+	if start >= total {
+		return []unstructured.Unstructured{}, total, nil
+	}
+
+	if end > total {
+		end = total
+	}
+
+	return serviceList.Items[start:end], total, nil
+}
+
+// GetMiddlewares 获取traefik命名空间中的Middlewares，支持分页
+func (s *TraefikService) GetMiddlewares(page, pageSize int) ([]unstructured.Unstructured, int, error) {
+	// 检查Kubernetes客户端是否已初始化
+	if kubernetes.Config == nil {
+		return nil, 0, nil
+	}
+
+	// 创建dynamic client
+	dynamicClient, err := dynamic.NewForConfig(kubernetes.Config)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// 定义Middlewares的GroupVersionResource
+	middlewareGVR := schema.GroupVersionResource{
+		Group:    "traefik.io",
+		Version:  "v1alpha1",
+		Resource: "middlewares",
+	}
+
+	// 获取traefik命名空间中的Middlewares
+	middlewareList, err := dynamicClient.Resource(middlewareGVR).Namespace("traefik").List(context.Background(), metav1.ListOptions{})
+	if err != nil {
+		return nil, 0, err
+	}
+
+	total := len(middlewareList.Items)
+
+	// 处理分页
+	if page <= 0 {
+		page = 1
+	}
+	if pageSize <= 0 {
+		pageSize = 10
+	}
+
+	start := (page - 1) * pageSize
+	end := start + pageSize
+
+	if start >= total {
+		return []unstructured.Unstructured{}, total, nil
+	}
+
+	if end > total {
+		end = total
+	}
+
+	return middlewareList.Items[start:end], total, nil
+}
+
+// CreateHTTPRoute 创建HTTPRoute
+func (s *TraefikService) CreateHTTPRoute(namespace string, httpRoute *unstructured.Unstructured) (*unstructured.Unstructured, error) {
+	// 检查Kubernetes客户端是否已初始化
+	if kubernetes.Config == nil {
+		return nil, fmt.Errorf("kubernetes config is not initialized")
+	}
+
+	// 使用通用的CreateGatewayAPIResource方法创建HTTPRoute
+	return s.CreateGatewayAPIResource("gateway.networking.k8s.io", "v1", "HTTPRoute", namespace, httpRoute)
+}
+
+// CreateService 创建Service
+func (s *TraefikService) CreateService(namespace string, service *unstructured.Unstructured) (*unstructured.Unstructured, error) {
+	// 检查Kubernetes客户端是否已初始化
+	if kubernetes.Config == nil {
+		return nil, fmt.Errorf("kubernetes config is not initialized")
+	}
+
+	// 使用通用的CreateGatewayAPIResource方法创建Service
+	return s.CreateGatewayAPIResource("", "v1", "Service", namespace, service)
+}
+
+// CreateMiddleware 创建Middleware
+func (s *TraefikService) CreateMiddleware(namespace string, middleware *unstructured.Unstructured) (*unstructured.Unstructured, error) {
+	// 检查Kubernetes客户端是否已初始化
+	if kubernetes.Config == nil {
+		return nil, fmt.Errorf("kubernetes config is not initialized")
+	}
+
+	// 使用通用的CreateGatewayAPIResource方法创建Middleware
+	return s.CreateGatewayAPIResource("traefik.io", "v1alpha1", "Middleware", namespace, middleware)
+}
+
 // GetCRDByName 根据名称获取特定的Kubernetes CRD
 func (s *TraefikService) GetCRDByName(name string) (*apiextensionsv1.CustomResourceDefinition, error) {
 	// 检查API扩展客户端是否已初始化
