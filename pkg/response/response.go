@@ -3,16 +3,21 @@ package response
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 // Response 定义响应结构体
 type Response struct {
-	Code    int         `json:"code"`
-	Data    interface{} `json:"data,omitempty"`
-	Error   interface{} `json:"error,omitempty"`
-	Message string      `json:"message"`
+	Code      int         `json:"code"`                // 业务状态码
+	Message   string      `json:"message"`             // 响应消息
+	Data      interface{} `json:"data,omitempty"`      // 响应数据
+	Error     interface{} `json:"error,omitempty"`     // 错误信息
+	Timestamp int64       `json:"timestamp"`           // 响应时间戳
+	RequestID string      `json:"requestId"`           // 请求ID
+	Pagination interface{} `json:"pagination,omitempty"` // 分页信息
 }
 
 // ResponseOption 响应选项函数类型
@@ -38,9 +43,18 @@ func WithError(err interface{}) ResponseOption {
 	return func(r *Response) { r.Error = err }
 }
 
+// WithPagination 设置分页信息
+func WithPagination(pagination interface{}) ResponseOption {
+	return func(r *Response) { r.Pagination = pagination }
+}
+
 // respond 核心响应方法
 func respond(c *gin.Context, status int, opts ...ResponseOption) {
-	resp := &Response{Code: 0} // 默认成功
+	resp := &Response{
+		Code:      0,                                         // 默认成功
+		Timestamp: time.Now().Unix(),                         // 时间戳
+		RequestID: uuid.New().String(),                       // 请求ID
+	}
 	for _, opt := range opts {
 		opt(resp)
 	}
@@ -120,6 +134,16 @@ func ValidationError(c *gin.Context, errors map[string][]string, message ...stri
 	Error(c, http.StatusBadRequest,
 		WithMessage(defaultMessage("参数验证错误", message...)),
 		WithData(errors))
+}
+
+// PaginatedResponse 分页响应
+func PaginatedResponse(c *gin.Context, data interface{}, pagination interface{}, message ...string) {
+	opts := []ResponseOption{
+		WithData(data),
+		WithPagination(pagination),
+		WithMessage(defaultMessage("OK", message...)),
+	}
+	respond(c, http.StatusOK, opts...)
 }
 
 // defaultMessage 默认消息处理

@@ -8,13 +8,14 @@ import (
 	"rapide/pkg/config"
 	"rapide/pkg/kubernetes"
 	"rapide/pkg/logger"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // SetupKubernetes 初始化Kubernetes客户端并测试连接
 func SetupKubernetes() {
 	// 从配置中获取kubeconfig文件路径
-	kubeconfig := config.GetString("KUBECONFIG", "C:/Users/Administrator/Desktop/kubeconfig")
+	kubeconfig := config.GetString("KUBECONFIG", "/Users/shine/.kube/config")
 
 	// 初始化Kubernetes客户端
 	err := kubernetes.InitClient(kubeconfig)
