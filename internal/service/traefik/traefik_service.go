@@ -26,7 +26,7 @@ type TraefikService struct{}
 func (s *TraefikService) GetHTTPRoutes(page, pageSize int) ([]unstructured.Unstructured, int, error) {
 	// 检查Kubernetes客户端是否已初始化
 	if kubernetes.Config == nil {
-		return nil, 0, nil
+		return []unstructured.Unstructured{}, 0, nil
 	}
 
 	// 创建dynamic client
@@ -72,11 +72,11 @@ func (s *TraefikService) GetHTTPRoutes(page, pageSize int) ([]unstructured.Unstr
 	return httpRouteList.Items[start:end], total, nil
 }
 
-// GetServices 获取traefik命名空间中的Services，支持分页
+// GetServices 获取traefik命名空间中的TraefikServices，支持分页
 func (s *TraefikService) GetServices(page, pageSize int) ([]unstructured.Unstructured, int, error) {
 	// 检查Kubernetes客户端是否已初始化
 	if kubernetes.Config == nil {
-		return nil, 0, nil
+		return []unstructured.Unstructured{}, 0, nil
 	}
 
 	// 创建dynamic client
@@ -85,20 +85,20 @@ func (s *TraefikService) GetServices(page, pageSize int) ([]unstructured.Unstruc
 		return nil, 0, err
 	}
 
-	// 定义Services的GroupVersionResource
-	serviceGVR := schema.GroupVersionResource{
-		Group:    "",
-		Version:  "v1",
-		Resource: "services",
+	// 定义TraefikServices的GroupVersionResource
+	traefikServiceGVR := schema.GroupVersionResource{
+		Group:    "traefik.io",
+		Version:  "v1alpha1",
+		Resource: "traefikservices",
 	}
 
-	// 获取traefik命名空间中的Services
-	serviceList, err := dynamicClient.Resource(serviceGVR).Namespace("traefik").List(context.Background(), metav1.ListOptions{})
+	// 获取traefik命名空间中的TraefikServices
+	traefikServiceList, err := dynamicClient.Resource(traefikServiceGVR).Namespace("traefik").List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		return nil, 0, err
 	}
 
-	total := len(serviceList.Items)
+	total := len(traefikServiceList.Items)
 
 	// 处理分页
 	if page <= 0 {
@@ -119,14 +119,14 @@ func (s *TraefikService) GetServices(page, pageSize int) ([]unstructured.Unstruc
 		end = total
 	}
 
-	return serviceList.Items[start:end], total, nil
+	return traefikServiceList.Items[start:end], total, nil
 }
 
 // GetMiddlewares 获取traefik命名空间中的Middlewares，支持分页
 func (s *TraefikService) GetMiddlewares(page, pageSize int) ([]unstructured.Unstructured, int, error) {
 	// 检查Kubernetes客户端是否已初始化
 	if kubernetes.Config == nil {
-		return nil, 0, nil
+		return []unstructured.Unstructured{}, 0, nil
 	}
 
 	// 创建dynamic client
@@ -176,22 +176,22 @@ func (s *TraefikService) GetMiddlewares(page, pageSize int) ([]unstructured.Unst
 func (s *TraefikService) CreateHTTPRoute(namespace string, httpRoute *unstructured.Unstructured) (*unstructured.Unstructured, error) {
 	// 检查Kubernetes客户端是否已初始化
 	if kubernetes.Config == nil {
-		return nil, fmt.Errorf("kubernetes config is not initialized")
+		return nil, fmt.Errorf("Kubernetes客户端未初始化，请检查配置")
 	}
 
 	// 使用通用的CreateGatewayAPIResource方法创建HTTPRoute
 	return s.CreateGatewayAPIResource("gateway.networking.k8s.io", "v1", "HTTPRoute", namespace, httpRoute)
 }
 
-// CreateService 创建Service
+// CreateService 创建TraefikService
 func (s *TraefikService) CreateService(namespace string, service *unstructured.Unstructured) (*unstructured.Unstructured, error) {
 	// 检查Kubernetes客户端是否已初始化
 	if kubernetes.Config == nil {
 		return nil, fmt.Errorf("kubernetes config is not initialized")
 	}
 
-	// 使用通用的CreateGatewayAPIResource方法创建Service
-	return s.CreateGatewayAPIResource("", "v1", "Service", namespace, service)
+	// 使用通用的CreateGatewayAPIResource方法创建TraefikService
+	return s.CreateGatewayAPIResource("traefik.io", "v1alpha1", "TraefikService", namespace, service)
 }
 
 // CreateMiddleware 创建Middleware

@@ -58,7 +58,7 @@ func (ctrl *TraefikController) GetHTTPRoutes(c *gin.Context) {
 func (ctrl *TraefikController) GetHTTPRoute(c *gin.Context) {
 	// 获取参数
 	name := c.Param("name")
-	namespace := c.DefaultQuery("namespace", "traefik")
+	namespace := "traefik" // 统一使用traefik命名空间
 
 	if name == "" {
 		response.Abort400(c, "name 参数不能为空")
@@ -107,11 +107,8 @@ func (ctrl *TraefikController) CreateHTTPRoute(c *gin.Context) {
 		return
 	}
 
-	// 获取 namespace，如果没有指定则使用默认值 "traefik"
-	namespace, _ := metadata["namespace"].(string)
-	if namespace == "" {
-		namespace = "traefik"
-	}
+	// 统一使用traefik命名空间
+	namespace := "traefik"
 
 	// 创建unstructured.Unstructured对象
 	unstructuredHTTPRoute := &unstructured.Unstructured{
@@ -134,7 +131,7 @@ func (ctrl *TraefikController) CreateHTTPRoute(c *gin.Context) {
 func (ctrl *TraefikController) UpdateHTTPRoute(c *gin.Context) {
 	// 获取参数
 	name := c.Param("name")
-	namespace := c.DefaultQuery("namespace", "traefik")
+	namespace := "traefik" // 统一使用traefik命名空间
 
 	if name == "" {
 		response.Abort400(c, "name 参数不能为空")
@@ -191,7 +188,7 @@ func (ctrl *TraefikController) UpdateHTTPRoute(c *gin.Context) {
 func (ctrl *TraefikController) DeleteHTTPRoute(c *gin.Context) {
 	// 获取参数
 	name := c.Param("name")
-	namespace := c.DefaultQuery("namespace", "traefik")
+	namespace := "traefik" // 统一使用traefik命名空间
 
 	if name == "" {
 		response.Abort400(c, "name 参数不能为空")
@@ -249,16 +246,15 @@ func (ctrl *TraefikController) GetServices(c *gin.Context) {
 func (ctrl *TraefikController) GetService(c *gin.Context) {
 	// 获取参数
 	name := c.Param("name")
-	namespace := c.DefaultQuery("namespace", "traefik")
+	namespace := "traefik" // 统一使用traefik命名空间
 
 	if name == "" {
 		response.Abort400(c, "name 参数不能为空")
 		return
 	}
 
-	// 调用服务层获取Service详情
-	// 注意：Service属于core API group，所以group参数传递空字符串
-	serviceObj, err := service.Entrance.TraefikService.GetGatewayAPIResource("", "v1", "Service", namespace, name)
+	// 调用服务层获取TraefikService详情
+	serviceObj, err := service.Entrance.TraefikService.GetGatewayAPIResource("traefik.io", "v1alpha1", "TraefikService", namespace, name)
 	if err != nil {
 		logger.Error("Failed to get Service: " + err.Error())
 		response.Abort500(c, "获取Service失败: "+err.Error())
@@ -280,10 +276,10 @@ func (ctrl *TraefikController) CreateService(c *gin.Context) {
 
 	// 自动补充 apiVersion 和 Kind 字段
 	if _, ok := serviceObj["apiVersion"]; !ok {
-		serviceObj["apiVersion"] = "v1"
+		serviceObj["apiVersion"] = "traefik.io/v1alpha1"
 	}
 	if _, ok := serviceObj["kind"]; !ok {
-		serviceObj["kind"] = "Service"
+		serviceObj["kind"] = "TraefikService"
 	}
 
 	// 验证 metadata.name 不为空
@@ -299,54 +295,14 @@ func (ctrl *TraefikController) CreateService(c *gin.Context) {
 		return
 	}
 
-	// 获取 namespace，如果没有指定则使用默认值 "traefik"
-	namespace, _ := metadata["namespace"].(string)
-	if namespace == "" {
-		namespace = "traefik"
-	}
+	// 统一使用traefik命名空间
+	namespace := "traefik"
 
-	// 验证并修正 spec 字段
-	spec, ok := serviceObj["spec"].(map[string]interface{})
-	if !ok {
+	// 验证 spec 字段存在
+	if _, ok := serviceObj["spec"].(map[string]interface{}); !ok {
 		response.Abort400(c, "spec 字段格式错误")
 		return
 	}
-
-	// 修正 service type
-	if serviceType, ok := spec["type"].(string); ok {
-		if serviceType == "Service" {
-			spec["type"] = "ClusterIP"
-		}
-	} else {
-		// 默认设置为 ClusterIP
-		spec["type"] = "ClusterIP"
-	}
-
-	// 验证 ports 配置
-	if ports, ok := spec["ports"].([]interface{}); ok {
-		portMap := make(map[int]bool)
-		for _, port := range ports {
-			if portObj, ok := port.(map[string]interface{}); ok {
-				// 确保端口号唯一
-				if portNum, ok := portObj["port"].(float64); ok {
-					if portMap[int(portNum)] {
-						response.Abort400(c, "端口号不能重复")
-						return
-					}
-					portMap[int(portNum)] = true
-				}
-				// 确保 targetPort 正确设置
-				if _, ok := portObj["targetPort"]; !ok {
-					if portNum, ok := portObj["port"].(float64); ok {
-						portObj["targetPort"] = portNum
-					}
-				}
-			}
-		}
-	}
-
-	// 更新 serviceObj 中的 spec
-	serviceObj["spec"] = spec
 
 	// 创建unstructured.Unstructured对象
 	unstructuredService := &unstructured.Unstructured{
@@ -369,7 +325,7 @@ func (ctrl *TraefikController) CreateService(c *gin.Context) {
 func (ctrl *TraefikController) UpdateService(c *gin.Context) {
 	// 获取参数
 	name := c.Param("name")
-	namespace := c.DefaultQuery("namespace", "traefik")
+	namespace := "traefik" // 统一使用traefik命名空间
 
 	if name == "" {
 		response.Abort400(c, "name 参数不能为空")
@@ -386,10 +342,10 @@ func (ctrl *TraefikController) UpdateService(c *gin.Context) {
 
 	// 自动补充 apiVersion 和 Kind 字段
 	if _, ok := serviceObj["apiVersion"]; !ok {
-		serviceObj["apiVersion"] = "v1"
+		serviceObj["apiVersion"] = "traefik.io/v1alpha1"
 	}
 	if _, ok := serviceObj["kind"]; !ok {
-		serviceObj["kind"] = "Service"
+		serviceObj["kind"] = "TraefikService"
 	}
 
 	// 确保 metadata 字段存在
@@ -405,56 +361,19 @@ func (ctrl *TraefikController) UpdateService(c *gin.Context) {
 		metadata["namespace"] = namespace
 	}
 
-	// 验证并修正 spec 字段
-	spec, ok := serviceObj["spec"].(map[string]interface{})
-	if !ok {
+	// 验证 spec 字段存在
+	if _, ok := serviceObj["spec"].(map[string]interface{}); !ok {
 		response.Abort400(c, "spec 字段格式错误")
 		return
 	}
-
-	// 修正 service type
-	if serviceType, ok := spec["type"].(string); ok {
-		if serviceType == "Service" {
-			spec["type"] = "ClusterIP"
-		}
-	} else {
-		// 默认设置为 ClusterIP
-		spec["type"] = "ClusterIP"
-	}
-
-	// 验证 ports 配置
-	if ports, ok := spec["ports"].([]interface{}); ok {
-		portMap := make(map[int]bool)
-		for _, port := range ports {
-			if portObj, ok := port.(map[string]interface{}); ok {
-				// 确保端口号唯一
-				if portNum, ok := portObj["port"].(float64); ok {
-					if portMap[int(portNum)] {
-						response.Abort400(c, "端口号不能重复")
-						return
-					}
-					portMap[int(portNum)] = true
-				}
-				// 确保 targetPort 正确设置
-				if _, ok := portObj["targetPort"]; !ok {
-					if portNum, ok := portObj["port"].(float64); ok {
-						portObj["targetPort"] = portNum
-					}
-				}
-			}
-		}
-	}
-
-	// 更新 serviceObj 中的 spec
-	serviceObj["spec"] = spec
 
 	// 创建unstructured.Unstructured对象
 	unstructuredService := &unstructured.Unstructured{
 		Object: serviceObj,
 	}
 
-	// 调用服务层更新Service
-	updatedService, err := service.Entrance.TraefikService.UpdateGatewayAPIResource("", "v1", "Service", namespace, name, unstructuredService)
+	// 调用服务层更新TraefikService
+	updatedService, err := service.Entrance.TraefikService.UpdateGatewayAPIResource("traefik.io", "v1alpha1", "TraefikService", namespace, name, unstructuredService)
 	if err != nil {
 		logger.Error("Failed to update Service: " + err.Error())
 		response.Abort500(c, "更新Service失败: " + err.Error())
@@ -469,15 +388,15 @@ func (ctrl *TraefikController) UpdateService(c *gin.Context) {
 func (ctrl *TraefikController) DeleteService(c *gin.Context) {
 	// 获取参数
 	name := c.Param("name")
-	namespace := c.DefaultQuery("namespace", "traefik")
+	namespace := "traefik" // 统一使用traefik命名空间
 
 	if name == "" {
 		response.Abort400(c, "name 参数不能为空")
 		return
 	}
 
-	// 调用服务层删除Service
-	err := service.Entrance.TraefikService.DeleteGatewayAPIResource("", "v1", "Service", namespace, name)
+	// 调用服务层删除TraefikService
+	err := service.Entrance.TraefikService.DeleteGatewayAPIResource("traefik.io", "v1alpha1", "TraefikService", namespace, name)
 	if err != nil {
 		logger.Error("Failed to delete Service: " + err.Error())
 		response.Abort500(c, "删除Service失败: "+err.Error())
@@ -527,7 +446,7 @@ func (ctrl *TraefikController) GetMiddlewares(c *gin.Context) {
 func (ctrl *TraefikController) GetMiddleware(c *gin.Context) {
 	// 获取参数
 	name := c.Param("name")
-	namespace := c.DefaultQuery("namespace", "traefik")
+	namespace := "traefik" // 统一使用traefik命名空间
 
 	if name == "" {
 		response.Abort400(c, "name 参数不能为空")
@@ -614,11 +533,8 @@ func (ctrl *TraefikController) CreateMiddleware(c *gin.Context) {
 		return
 	}
 
-	// 获取 namespace，如果没有指定则使用默认值 "traefik"
-	namespace, _ := metadata["namespace"].(string)
-	if namespace == "" {
-		namespace = "traefik"
-	}
+	// 统一使用traefik命名空间
+	namespace := "traefik"
 
 	// 创建unstructured.Unstructured对象
 	unstructuredMiddleware := &unstructured.Unstructured{
@@ -641,7 +557,7 @@ func (ctrl *TraefikController) CreateMiddleware(c *gin.Context) {
 func (ctrl *TraefikController) UpdateMiddleware(c *gin.Context) {
 	// 获取参数
 	name := c.Param("name")
-	namespace := c.DefaultQuery("namespace", "traefik")
+	namespace := "traefik" // 统一使用traefik命名空间
 
 	if name == "" {
 		response.Abort400(c, "name 参数不能为空")
@@ -736,7 +652,7 @@ func (ctrl *TraefikController) UpdateMiddleware(c *gin.Context) {
 func (ctrl *TraefikController) DeleteMiddleware(c *gin.Context) {
 	// 获取参数
 	name := c.Param("name")
-	namespace := c.DefaultQuery("namespace", "traefik")
+	namespace := "traefik" // 统一使用traefik命名空间
 
 	if name == "" {
 		response.Abort400(c, "name 参数不能为空")
