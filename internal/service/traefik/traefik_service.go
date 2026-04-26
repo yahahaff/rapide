@@ -22,7 +22,7 @@ type TraefikGroup struct {
 
 type TraefikService struct{}
 
-// GetHTTPRoutes 获取traefik命名空间中的HTTPRoutes，支持分页
+// GetHTTPRoutes 获取traefik命名空间中的IngressRoutes，支持分页
 func (s *TraefikService) GetHTTPRoutes(page, pageSize int) ([]unstructured.Unstructured, int, error) {
 	// 检查Kubernetes客户端是否已初始化
 	if kubernetes.Config == nil {
@@ -35,20 +35,20 @@ func (s *TraefikService) GetHTTPRoutes(page, pageSize int) ([]unstructured.Unstr
 		return nil, 0, err
 	}
 
-	// 定义HTTPRoutes的GroupVersionResource
-	httpRouteGVR := schema.GroupVersionResource{
-		Group:    "gateway.networking.k8s.io",
-		Version:  "v1",
-		Resource: "httproutes",
+	// 定义IngressRoutes的GroupVersionResource (Traefik原生CRD)
+	ingressRouteGVR := schema.GroupVersionResource{
+		Group:    "traefik.io",
+		Version:  "v1alpha1",
+		Resource: "ingressroutes",
 	}
 
-	// 获取traefik命名空间中的HTTPRoutes
-	httpRouteList, err := dynamicClient.Resource(httpRouteGVR).Namespace("traefik").List(context.Background(), metav1.ListOptions{})
+	// 获取traefik命名空间中的IngressRoutes
+	ingressRouteList, err := dynamicClient.Resource(ingressRouteGVR).Namespace("traefik").List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		return nil, 0, err
 	}
 
-	total := len(httpRouteList.Items)
+	total := len(ingressRouteList.Items)
 
 	// 处理分页
 	if page <= 0 {
@@ -69,7 +69,7 @@ func (s *TraefikService) GetHTTPRoutes(page, pageSize int) ([]unstructured.Unstr
 		end = total
 	}
 
-	return httpRouteList.Items[start:end], total, nil
+	return ingressRouteList.Items[start:end], total, nil
 }
 
 // GetServices 获取traefik命名空间中的TraefikServices，支持分页
@@ -172,15 +172,15 @@ func (s *TraefikService) GetMiddlewares(page, pageSize int) ([]unstructured.Unst
 	return middlewareList.Items[start:end], total, nil
 }
 
-// CreateHTTPRoute 创建HTTPRoute
-func (s *TraefikService) CreateHTTPRoute(namespace string, httpRoute *unstructured.Unstructured) (*unstructured.Unstructured, error) {
+// CreateHTTPRoute 创建IngressRoute
+func (s *TraefikService) CreateHTTPRoute(namespace string, ingressRoute *unstructured.Unstructured) (*unstructured.Unstructured, error) {
 	// 检查Kubernetes客户端是否已初始化
 	if kubernetes.Config == nil {
 		return nil, fmt.Errorf("Kubernetes客户端未初始化，请检查配置")
 	}
 
-	// 使用通用的CreateGatewayAPIResource方法创建HTTPRoute
-	return s.CreateGatewayAPIResource("gateway.networking.k8s.io", "v1", "HTTPRoute", namespace, httpRoute)
+	// 使用通用的CreateGatewayAPIResource方法创建IngressRoute (Traefik原生CRD)
+	return s.CreateGatewayAPIResource("traefik.io", "v1alpha1", "IngressRoute", namespace, ingressRoute)
 }
 
 // CreateService 创建TraefikService

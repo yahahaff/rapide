@@ -3,7 +3,6 @@ package sys
 import (
 	"fmt"
 
-	"github.com/gin-gonic/gin"
 	"rapide/internal/controllers"
 	sysDao "rapide/internal/dao/sys"
 	"rapide/internal/models/sys"
@@ -11,6 +10,8 @@ import (
 	"rapide/internal/requests/validators"
 	"rapide/pkg/database"
 	"rapide/pkg/response"
+
+	"github.com/gin-gonic/gin"
 )
 
 type RoleController struct {
@@ -41,7 +42,7 @@ func (rc *RoleController) GetRole(c *gin.Context) {
 
 	// 构造返回数据
 	responseData := map[string]interface{}{
-		"result":   roles,
+		"list":     roles,
 		"total":    total,
 		"page":     page,
 		"pageSize": pageSize,

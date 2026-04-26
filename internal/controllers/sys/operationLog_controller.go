@@ -1,12 +1,13 @@
 package sys
 
 import (
-	"github.com/gin-gonic/gin"
 	"rapide/internal/controllers"
 	"rapide/internal/requests/sys"
 	"rapide/internal/requests/validators"
 	"rapide/internal/service"
 	"rapide/pkg/response"
+
+	"github.com/gin-gonic/gin"
 )
 
 type OperationLogController struct {
@@ -59,7 +60,7 @@ func (*OperationLogController) GetOperationLog(c *gin.Context) {
 	result := gin.H{
 		"page":     page,
 		"pageSize": pageSize,
-		"result":   data,
+		"list":     data,
 		"total":    pager.TotalCount,
 	}
 	response.OK(c, result)

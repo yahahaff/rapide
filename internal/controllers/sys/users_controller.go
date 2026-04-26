@@ -3,7 +3,6 @@ package sys
 import (
 	"fmt"
 
-	"github.com/gin-gonic/gin"
 	"rapide/internal/controllers"
 	"rapide/internal/requests/sys"
 	"rapide/internal/requests/validators"
@@ -11,6 +10,8 @@ import (
 	"rapide/pkg/jwt"
 	"rapide/pkg/logger"
 	"rapide/pkg/response"
+
+	"github.com/gin-gonic/gin"
 )
 
 type UsersController struct {
@@ -69,8 +70,8 @@ func (ctrl *UsersController) GetUserList(c *gin.Context) {
 	}
 
 	result := gin.H{
-		"result": data,
-		"pager":  pager,
+		"list":  data,
+		"pager": pager,
 	}
 	response.OK(c, result)
 }

@@ -47,14 +47,14 @@ func (ctrl *TraefikController) GetHTTPRoutes(c *gin.Context) {
 	responseData := gin.H{
 		"page":     page,
 		"pageSize": pageSize,
-		"result":   httpRoutes,
+		"list":     httpRoutes,
 		"total":    total,
 	}
 
 	response.OK(c, responseData)
 }
 
-// GetHTTPRoute 获取单个HTTPRoute详情
+// GetHTTPRoute 获取单个IngressRoute详情
 func (ctrl *TraefikController) GetHTTPRoute(c *gin.Context) {
 	// 获取参数
 	name := c.Param("name")
@@ -65,37 +65,37 @@ func (ctrl *TraefikController) GetHTTPRoute(c *gin.Context) {
 		return
 	}
 
-	// 调用服务层获取HTTPRoute详情
-	httpRoute, err := service.Entrance.TraefikService.GetGatewayAPIResource("gateway.networking.k8s.io", "v1", "HTTPRoute", namespace, name)
+	// 调用服务层获取IngressRoute详情 (Traefik原生CRD)
+	ingressRoute, err := service.Entrance.TraefikService.GetGatewayAPIResource("traefik.io", "v1alpha1", "IngressRoute", namespace, name)
 	if err != nil {
-		logger.Error("Failed to get HTTPRoute: " + err.Error())
-		response.Abort500(c, "获取HTTPRoute失败: "+err.Error())
+		logger.Error("Failed to get IngressRoute: " + err.Error())
+		response.Abort500(c, "获取IngressRoute失败: "+err.Error())
 		return
 	}
 
-	response.OK(c, httpRoute)
+	response.OK(c, ingressRoute)
 }
 
-// CreateHTTPRoute 创建HTTPRoute
+// CreateHTTPRoute 创建IngressRoute
 func (ctrl *TraefikController) CreateHTTPRoute(c *gin.Context) {
-	// 从请求体中获取HTTPRoute的定义
-	var httpRoute map[string]interface{}
-	if err := c.ShouldBindJSON(&httpRoute); err != nil {
+	// 从请求体中获取IngressRoute的定义
+	var ingressRoute map[string]interface{}
+	if err := c.ShouldBindJSON(&ingressRoute); err != nil {
 		logger.Error("Failed to bind request body: " + err.Error())
 		response.Abort400(c, "请求体格式错误: "+err.Error())
 		return
 	}
 
-	// 自动补充 apiVersion 和 Kind 字段
-	if _, ok := httpRoute["apiVersion"]; !ok {
-		httpRoute["apiVersion"] = "gateway.networking.k8s.io/v1"
+	// 自动补充 apiVersion 和 Kind 字段 (Traefik原生CRD)
+	if _, ok := ingressRoute["apiVersion"]; !ok {
+		ingressRoute["apiVersion"] = "traefik.io/v1alpha1"
 	}
-	if _, ok := httpRoute["kind"]; !ok {
-		httpRoute["kind"] = "HTTPRoute"
+	if _, ok := ingressRoute["kind"]; !ok {
+		ingressRoute["kind"] = "IngressRoute"
 	}
 
 	// 验证 metadata.name 不为空
-	metadata, ok := httpRoute["metadata"].(map[string]interface{})
+	metadata, ok := ingressRoute["metadata"].(map[string]interface{})
 	if !ok {
 		response.Abort400(c, "metadata 字段格式错误")
 		return
@@ -111,23 +111,23 @@ func (ctrl *TraefikController) CreateHTTPRoute(c *gin.Context) {
 	namespace := "traefik"
 
 	// 创建unstructured.Unstructured对象
-	unstructuredHTTPRoute := &unstructured.Unstructured{
-		Object: httpRoute,
+	unstructuredIngressRoute := &unstructured.Unstructured{
+		Object: ingressRoute,
 	}
 
-	// 调用服务层创建HTTPRoute
-	createdHTTPRoute, err := service.Entrance.TraefikService.CreateHTTPRoute(namespace, unstructuredHTTPRoute)
+	// 调用服务层创建IngressRoute
+	createdIngressRoute, err := service.Entrance.TraefikService.CreateHTTPRoute(namespace, unstructuredIngressRoute)
 	if err != nil {
-		logger.Error("Failed to create HTTPRoute: " + err.Error())
-		response.Abort500(c, "创建HTTPRoute失败: "+err.Error())
+		logger.Error("Failed to create IngressRoute: " + err.Error())
+		response.Abort500(c, "创建IngressRoute失败: "+err.Error())
 		return
 	}
 
-	// 返回创建的HTTPRoute
-	response.OK(c, createdHTTPRoute)
+	// 返回创建的IngressRoute
+	response.OK(c, createdIngressRoute)
 }
 
-// UpdateHTTPRoute 更新HTTPRoute
+// UpdateHTTPRoute 更新IngressRoute
 func (ctrl *TraefikController) UpdateHTTPRoute(c *gin.Context) {
 	// 获取参数
 	name := c.Param("name")
@@ -138,27 +138,27 @@ func (ctrl *TraefikController) UpdateHTTPRoute(c *gin.Context) {
 		return
 	}
 
-	// 从请求体中获取HTTPRoute的定义
-	var httpRoute map[string]interface{}
-	if err := c.ShouldBindJSON(&httpRoute); err != nil {
+	// 从请求体中获取IngressRoute的定义
+	var ingressRoute map[string]interface{}
+	if err := c.ShouldBindJSON(&ingressRoute); err != nil {
 		logger.Error("Failed to bind request body: " + err.Error())
 		response.Abort400(c, "请求体格式错误: "+err.Error())
 		return
 	}
 
-	// 自动补充 apiVersion 和 Kind 字段
-	if _, ok := httpRoute["apiVersion"]; !ok {
-		httpRoute["apiVersion"] = "gateway.networking.k8s.io/v1"
+	// 自动补充 apiVersion 和 Kind 字段 (Traefik原生CRD)
+	if _, ok := ingressRoute["apiVersion"]; !ok {
+		ingressRoute["apiVersion"] = "traefik.io/v1alpha1"
 	}
-	if _, ok := httpRoute["kind"]; !ok {
-		httpRoute["kind"] = "HTTPRoute"
+	if _, ok := ingressRoute["kind"]; !ok {
+		ingressRoute["kind"] = "IngressRoute"
 	}
 
 	// 确保 metadata 字段存在
-	metadata, ok := httpRoute["metadata"].(map[string]interface{})
+	metadata, ok := ingressRoute["metadata"].(map[string]interface{})
 	if !ok {
 		metadata = make(map[string]interface{})
-		httpRoute["metadata"] = metadata
+		ingressRoute["metadata"] = metadata
 	}
 
 	// 确保名称和命名空间正确
@@ -168,23 +168,23 @@ func (ctrl *TraefikController) UpdateHTTPRoute(c *gin.Context) {
 	}
 
 	// 创建unstructured.Unstructured对象
-	unstructuredHTTPRoute := &unstructured.Unstructured{
-		Object: httpRoute,
+	unstructuredIngressRoute := &unstructured.Unstructured{
+		Object: ingressRoute,
 	}
 
-	// 调用服务层更新HTTPRoute
-	updatedHTTPRoute, err := service.Entrance.TraefikService.UpdateGatewayAPIResource("gateway.networking.k8s.io", "v1", "HTTPRoute", namespace, name, unstructuredHTTPRoute)
+	// 调用服务层更新IngressRoute
+	updatedIngressRoute, err := service.Entrance.TraefikService.UpdateGatewayAPIResource("traefik.io", "v1alpha1", "IngressRoute", namespace, name, unstructuredIngressRoute)
 	if err != nil {
-		logger.Error("Failed to update HTTPRoute: " + err.Error())
-		response.Abort500(c, "更新HTTPRoute失败: "+err.Error())
+		logger.Error("Failed to update IngressRoute: " + err.Error())
+		response.Abort500(c, "更新IngressRoute失败: "+err.Error())
 		return
 	}
 
-	// 返回更新后的HTTPRoute
-	response.OK(c, updatedHTTPRoute)
+	// 返回更新后的IngressRoute
+	response.OK(c, updatedIngressRoute)
 }
 
-// DeleteHTTPRoute 删除HTTPRoute
+// DeleteHTTPRoute 删除IngressRoute
 func (ctrl *TraefikController) DeleteHTTPRoute(c *gin.Context) {
 	// 获取参数
 	name := c.Param("name")
@@ -195,15 +195,15 @@ func (ctrl *TraefikController) DeleteHTTPRoute(c *gin.Context) {
 		return
 	}
 
-	// 调用服务层删除HTTPRoute
-	err := service.Entrance.TraefikService.DeleteGatewayAPIResource("gateway.networking.k8s.io", "v1", "HTTPRoute", namespace, name)
+	// 调用服务层删除IngressRoute (Traefik原生CRD)
+	err := service.Entrance.TraefikService.DeleteGatewayAPIResource("traefik.io", "v1alpha1", "IngressRoute", namespace, name)
 	if err != nil {
-		logger.Error("Failed to delete HTTPRoute: " + err.Error())
-		response.Abort500(c, "删除HTTPRoute失败: "+err.Error())
+		logger.Error("Failed to delete IngressRoute: " + err.Error())
+		response.Abort500(c, "删除IngressRoute失败: "+err.Error())
 		return
 	}
 
-	response.Success(c, "删除HTTPRoute成功")
+	response.Success(c, "删除IngressRoute成功")
 }
 
 // GetServices 获取traefik命名空间中的Services，支持分页
@@ -235,7 +235,7 @@ func (ctrl *TraefikController) GetServices(c *gin.Context) {
 	responseData := gin.H{
 		"page":     page,
 		"pageSize": pageSize,
-		"result":   services,
+		"list":     services,
 		"total":    total,
 	}
 
@@ -270,7 +270,7 @@ func (ctrl *TraefikController) CreateService(c *gin.Context) {
 	var serviceObj map[string]interface{}
 	if err := c.ShouldBindJSON(&serviceObj); err != nil {
 		logger.Error("Failed to bind request body: " + err.Error())
-		response.Abort400(c, "请求体格式错误: " + err.Error())
+		response.Abort400(c, "请求体格式错误: "+err.Error())
 		return
 	}
 
@@ -313,7 +313,7 @@ func (ctrl *TraefikController) CreateService(c *gin.Context) {
 	createdService, err := service.Entrance.TraefikService.CreateService(namespace, unstructuredService)
 	if err != nil {
 		logger.Error("Failed to create Service: " + err.Error())
-		response.Abort500(c, "创建Service失败: " + err.Error())
+		response.Abort500(c, "创建Service失败: "+err.Error())
 		return
 	}
 
@@ -336,7 +336,7 @@ func (ctrl *TraefikController) UpdateService(c *gin.Context) {
 	var serviceObj map[string]interface{}
 	if err := c.ShouldBindJSON(&serviceObj); err != nil {
 		logger.Error("Failed to bind request body: " + err.Error())
-		response.Abort400(c, "请求体格式错误: " + err.Error())
+		response.Abort400(c, "请求体格式错误: "+err.Error())
 		return
 	}
 
@@ -376,7 +376,7 @@ func (ctrl *TraefikController) UpdateService(c *gin.Context) {
 	updatedService, err := service.Entrance.TraefikService.UpdateGatewayAPIResource("traefik.io", "v1alpha1", "TraefikService", namespace, name, unstructuredService)
 	if err != nil {
 		logger.Error("Failed to update Service: " + err.Error())
-		response.Abort500(c, "更新Service失败: " + err.Error())
+		response.Abort500(c, "更新Service失败: "+err.Error())
 		return
 	}
 
@@ -435,7 +435,7 @@ func (ctrl *TraefikController) GetMiddlewares(c *gin.Context) {
 	responseData := gin.H{
 		"page":     page,
 		"pageSize": pageSize,
-		"result":   middlewares,
+		"list":     middlewares,
 		"total":    total,
 	}
 
@@ -470,7 +470,7 @@ func (ctrl *TraefikController) CreateMiddleware(c *gin.Context) {
 	var middlewareObj map[string]interface{}
 	if err := c.ShouldBindJSON(&middlewareObj); err != nil {
 		logger.Error("Failed to bind request body: " + err.Error())
-		response.Abort400(c, "请求体格式错误: " + err.Error())
+		response.Abort400(c, "请求体格式错误: "+err.Error())
 		return
 	}
 
@@ -486,26 +486,26 @@ func (ctrl *TraefikController) CreateMiddleware(c *gin.Context) {
 	if spec, ok := middlewareObj["spec"].(map[string]interface{}); ok {
 		// 创建一个映射，存储需要修复的字段名
 		fieldMappings := map[string]string{
-			"stripprefix":          "stripPrefix",
-			"addprefix":            "addPrefix",
-			"replacepath":          "replacePath",
-			"replacepathregex":     "replacePathRegex",
-			"chain":                "chain",
-			"circuitbreaker":       "circuitBreaker",
-			"compress":             "compress",
-			"headers":              "headers",
-			"ipwhitelist":          "ipWhiteList",
-			"ratelimit":            "rateLimit",
-			"redirectregex":        "redirectRegex",
-			"retry":                "retry",
-			"buffering":            "buffering",
-			"errors":               "errors",
-			"forwardauth":          "forwardAuth",
-			"basicauth":            "basicAuth",
-			"digestauth":           "digestAuth",
-			"inflightreq":          "inFlightReq",
-			"passtlsclientcert":    "passTLSClientCert",
-			"plugin":               "plugin",
+			"stripprefix":       "stripPrefix",
+			"addprefix":         "addPrefix",
+			"replacepath":       "replacePath",
+			"replacepathregex":  "replacePathRegex",
+			"chain":             "chain",
+			"circuitbreaker":    "circuitBreaker",
+			"compress":          "compress",
+			"headers":           "headers",
+			"ipwhitelist":       "ipWhiteList",
+			"ratelimit":         "rateLimit",
+			"redirectregex":     "redirectRegex",
+			"retry":             "retry",
+			"buffering":         "buffering",
+			"errors":            "errors",
+			"forwardauth":       "forwardAuth",
+			"basicauth":         "basicAuth",
+			"digestauth":        "digestAuth",
+			"inflightreq":       "inFlightReq",
+			"passtlsclientcert": "passTLSClientCert",
+			"plugin":            "plugin",
 		}
 
 		// 修复 spec 中的字段名
@@ -545,7 +545,7 @@ func (ctrl *TraefikController) CreateMiddleware(c *gin.Context) {
 	createdMiddleware, err := service.Entrance.TraefikService.CreateMiddleware(namespace, unstructuredMiddleware)
 	if err != nil {
 		logger.Error("Failed to create Middleware: " + err.Error())
-		response.Abort500(c, "创建Middleware失败: " + err.Error())
+		response.Abort500(c, "创建Middleware失败: "+err.Error())
 		return
 	}
 
@@ -568,7 +568,7 @@ func (ctrl *TraefikController) UpdateMiddleware(c *gin.Context) {
 	var middlewareObj map[string]interface{}
 	if err := c.ShouldBindJSON(&middlewareObj); err != nil {
 		logger.Error("Failed to bind request body: " + err.Error())
-		response.Abort400(c, "请求体格式错误: " + err.Error())
+		response.Abort400(c, "请求体格式错误: "+err.Error())
 		return
 	}
 
@@ -584,26 +584,26 @@ func (ctrl *TraefikController) UpdateMiddleware(c *gin.Context) {
 	if spec, ok := middlewareObj["spec"].(map[string]interface{}); ok {
 		// 创建一个映射，存储需要修复的字段名
 		fieldMappings := map[string]string{
-			"stripprefix":          "stripPrefix",
-			"addprefix":            "addPrefix",
-			"replacepath":          "replacePath",
-			"replacepathregex":     "replacePathRegex",
-			"chain":                "chain",
-			"circuitbreaker":       "circuitBreaker",
-			"compress":             "compress",
-			"headers":              "headers",
-			"ipwhitelist":          "ipWhiteList",
-			"ratelimit":            "rateLimit",
-			"redirectregex":        "redirectRegex",
-			"retry":                "retry",
-			"buffering":            "buffering",
-			"errors":               "errors",
-			"forwardauth":          "forwardAuth",
-			"basicauth":            "basicAuth",
-			"digestauth":           "digestAuth",
-			"inflightreq":          "inFlightReq",
-			"passtlsclientcert":    "passTLSClientCert",
-			"plugin":               "plugin",
+			"stripprefix":       "stripPrefix",
+			"addprefix":         "addPrefix",
+			"replacepath":       "replacePath",
+			"replacepathregex":  "replacePathRegex",
+			"chain":             "chain",
+			"circuitbreaker":    "circuitBreaker",
+			"compress":          "compress",
+			"headers":           "headers",
+			"ipwhitelist":       "ipWhiteList",
+			"ratelimit":         "rateLimit",
+			"redirectregex":     "redirectRegex",
+			"retry":             "retry",
+			"buffering":         "buffering",
+			"errors":            "errors",
+			"forwardauth":       "forwardAuth",
+			"basicauth":         "basicAuth",
+			"digestauth":        "digestAuth",
+			"inflightreq":       "inFlightReq",
+			"passtlsclientcert": "passTLSClientCert",
+			"plugin":            "plugin",
 		}
 
 		// 修复 spec 中的字段名

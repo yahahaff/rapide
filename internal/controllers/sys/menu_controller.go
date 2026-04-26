@@ -3,7 +3,6 @@ package sys
 import (
 	"fmt"
 
-	"github.com/gin-gonic/gin"
 	"rapide/internal/controllers"
 	"rapide/internal/models/sys"
 	sysReq "rapide/internal/requests/sys"
@@ -12,6 +11,8 @@ import (
 	"rapide/internal/utils"
 	"rapide/pkg/database"
 	"rapide/pkg/response"
+
+	"github.com/gin-gonic/gin"
 )
 
 // MenuController 菜单控制器
@@ -63,8 +64,8 @@ func (mc *MenuController) GetMenuList(c *gin.Context) {
 
 	// 构造返回数据
 	responseData := map[string]interface{}{
-		"result": menuTree,
-		"total":  total,
+		"list":  menuTree,
+		"total": total,
 	}
 
 	response.OK(c, responseData)
